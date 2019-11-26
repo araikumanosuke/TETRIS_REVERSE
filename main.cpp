@@ -14,19 +14,28 @@
 
 #define GAME_FPS_SPEED	60
 
+#define GAME_SOUND_BGM_TITLE	"SOUND\\bgm_title.mp3"
+#define GAME_SOUND_BGM_PLAY		"SOUND\\bgm_title_2.mp3"
+
 
 enum GAME_SCENE {
-	GAME_SCENE_TITLE,		//タイトル画面
-	GAME_SCENE_RANKING,		//ランキング画面
-	GAME_SCENE_SOZAI,		//素材表示画面
-	GAME_SCENE_PLAY_ENDLESS,//プレイ画面(エンドレスモード)
-	GAME_SCENE_PLAY_TIME,	//プレイ画面(タイムアタックモード)
-	GAME_SCENE_CHECK_ENDLESS,		//確認画面
+	GAME_SCENE_TITLE,			//タイトル画面
+	GAME_SCENE_RANKING,			//ランキング画面
+	GAME_SCENE_SOZAI,			//素材表示画面
+	GAME_SCENE_PLAY_ENDLESS,	//プレイ画面(エンドレスモード)
+	GAME_SCENE_PLAY_TIME,		//プレイ画面(タイムアタックモード)
+	GAME_SCENE_CHECK_ENDLESS,	//確認画面
 	GAME_SCENE_CHECK_TIME,		//確認画面
-	GAME_SCENE_END_CLEAR,	//エンド画面(ゲームクリア)
-	GAME_SCENE_END_OVER		//エンド画面(ゲームオーバー)
+	GAME_SCENE_END_CLEAR,		//エンド画面(ゲームクリア)
+	GAME_SCENE_END_OVER			//エンド画面(ゲームオーバー)
 };
 
+
+struct SOUND {
+	int handle;
+	char filepath[128];
+	int playtype;
+};
 
 BOOL IsWM_CREATE = FALSE;	//WM_CREATEが正常に動作したか判断する
 
@@ -39,6 +48,8 @@ char AllKeyState[256];	//全てのキーの状態が入る
 
 int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
+SOUND bgm_title;
+SOUND bgm_play;
 
 LRESULT CALLBACK MY_WNDPROC(HWND, UINT, WPARAM, LPARAM);	//自作ウィンドウプロシージャ
 
@@ -47,15 +58,18 @@ VOID MY_FPS_WAIT(VOID);		//FPS値を計測し、待つ関数
 
 VOID MY_ALL_KEYDOWN_UPDATE(VOID);	//キーの入力状態を更新する関数
 
-VOID MY_GAME_TITLE(VOID);		//タイトル
-VOID MY_GAME_RANKING(VOID);		//ランキング
-VOID MY_GAME_SOZAI(VOID);		//素材表示
-VOID MY_GAME_PLAY_ENDLESS(VOID);//プレイ・エンドレス
-VOID MY_GAME_PLAY_TIME(VOID);	//プレイ・タイムアタック
-VOID MY_GAME_CHECK_ENDLESS(VOID);		//確認
+VOID MY_SOUND_LOAD(SOUND *,const char *);
+
+VOID MY_GAME_TITLE(VOID);			//タイトル
+VOID MY_GAME_RANKING(VOID);			//ランキング
+VOID MY_GAME_SOZAI(VOID);			//素材表示
+VOID MY_GAME_PLAY_ENDLESS(VOID);	//プレイ・エンドレス
+VOID MY_GAME_PLAY_TIME(VOID);		//プレイ・タイムアタック
+VOID MY_GAME_CHECK_ENDLESS(VOID);	//確認
 VOID MY_GAME_CHECK_TIME(VOID);		//確認
-VOID MY_GAME_END_CLEAR(VOID);	//ゲームクリア
-VOID MY_GAME_END_OVER(VOID);	//ゲームオーバー
+VOID MY_GAME_END_CLEAR(VOID);		//ゲームクリア
+VOID MY_GAME_END_OVER(VOID);		//ゲームオーバー
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -67,6 +81,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMainWindowText(TEXT(GAME_WINDOW_NAME));		//タイトルの文字
 
 	if (DxLib_Init() == -1)	{ return -1; }	//DxLib初期化処理
+
+	MY_SOUND_LOAD(&bgm_title, GAME_SOUND_BGM_TITLE);
+	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
 
 	SetDrawScreen(DX_SCREEN_BACK);	//Draw系関数は裏画面に描画
 
@@ -127,6 +144,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MY_FPS_WAIT();		//FPSの処理(待つ)
 	}
 
+	DeleteSoundMem(bgm_title.handle);
+	DeleteSoundMem(bgm_play.handle);
+
 	DxLib_End();
 
 	return 0;
@@ -186,14 +206,33 @@ VOID MY_ALL_KEYDOWN_UPDATE(VOID)
 	return;
 }
 
+VOID MY_SOUND_LOAD(SOUND *s, const char *path)
+{
+	s->handle = LoadSoundMem(path);
+	return;
+}
+
 VOID MY_GAME_TITLE(VOID)
 {
+	if (CheckSoundMem(bgm_title.handle) == 0)
+	{
+		PlaySoundMem(bgm_title.handle, DX_PLAYTYPE_LOOP);
+	}
+
+	DrawString(0, 0, "タイトル画面", GetColor(255, 255, 255));
+	DrawString(0, 30, "エンドレスモード：Ｅキー", GetColor(255, 255, 255));
+	DrawString(0, 60, "タイムアタックモード：Ｔキー", GetColor(255, 255, 255));
+	DrawString(0, 90, "ランキング：Ｒキー", GetColor(255, 255, 255));
+	DrawString(0, 120, "素材：Ｓキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
+		StopSoundMem(bgm_title.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
 	else if (AllKeyState[KEY_INPUT_T] != 0)
 	{
+		StopSoundMem(bgm_title.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_TIME;
 	}
 	else if (AllKeyState[KEY_INPUT_R] != 0)
@@ -205,45 +244,49 @@ VOID MY_GAME_TITLE(VOID)
 		GameSceneNow = (int)GAME_SCENE_SOZAI;
 	}
 
-	DrawString(0, 0, "タイトル画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "エンドレスモード：Ｅキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "タイムアタックモード：Ｔキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "ランキング：Ｒキー", GetColor(255, 255, 255));
-	DrawString(0, 120, "素材：Ｓキー", GetColor(255, 255, 255));
-
 	return;
 }
 
 VOID MY_GAME_RANKING(VOID)
 {
+	DrawString(0, 0, "ランキング画面", GetColor(255, 255, 255));
+	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+	
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
-
-	DrawString(0, 0, "ランキング画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
 	return;
 }
 
 VOID MY_GAME_SOZAI(VOID)
 {
+	DrawString(0, 0, "素材表示画面", GetColor(255, 255, 255));
+	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
-
-	DrawString(0, 0, "素材表示画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
 	return;
 }
 
 VOID MY_GAME_PLAY_ENDLESS(VOID)
 {
+	if (CheckSoundMem(bgm_play.handle) == 0)
+	{
+		PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
+	}
+
+	DrawString(0, 0, "プレイ画面(エンドレスモード)", GetColor(255, 255, 255));
+	DrawString(0, 30, "エンド画面：ＥＮＴＥＲキー", GetColor(255, 255, 255));
+	DrawString(0, 60, "確認画面：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_RETURN] != 0)
 	{
+		StopSoundMem(bgm_play.handle);
 		GameSceneNow = (int)GAME_SCENE_END_OVER;
 	}
 	else if (AllKeyState[KEY_INPUT_BACK] != 0)
@@ -251,26 +294,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 		GameSceneNow = (int)GAME_SCENE_CHECK_ENDLESS;
 	}
 
-	DrawString(0, 0, "プレイ画面(エンドレスモード)", GetColor(255, 255, 255));
-	DrawString(0, 30, "エンド画面：ＥＮＴＥＲキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "確認画面：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
-
 	return;
 }
 
 VOID MY_GAME_PLAY_TIME(VOID)
 {
-	if (AllKeyState[KEY_INPUT_RETURN] != 0)
+	if (CheckSoundMem(bgm_play.handle) == 0)
 	{
-		GameSceneNow = (int)GAME_SCENE_END_OVER;
-	}
-	else if (AllKeyState[KEY_INPUT_SPACE] != 0)
-	{
-		GameSceneNow = (int)GAME_SCENE_END_CLEAR;
-	}
-	else if (AllKeyState[KEY_INPUT_BACK] != 0)
-	{
-		GameSceneNow = (int)GAME_SCENE_CHECK_TIME;
+		PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
 	}
 
 	DrawString(0, 0, "プレイ画面(タイムアタックモード)", GetColor(255, 255, 255));
@@ -278,13 +309,34 @@ VOID MY_GAME_PLAY_TIME(VOID)
 	DrawString(0, 60, "エンド画面(ゲームクリア)：ＳＰＡＣＥキー", GetColor(255, 255, 255));
 	DrawString(0, 90, "確認画面：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
+	if (AllKeyState[KEY_INPUT_RETURN] != 0)
+	{
+		StopSoundMem(bgm_play.handle);
+		GameSceneNow = (int)GAME_SCENE_END_OVER;
+	}
+	else if (AllKeyState[KEY_INPUT_SPACE] != 0)
+	{
+		StopSoundMem(bgm_play.handle);
+		GameSceneNow = (int)GAME_SCENE_END_CLEAR;
+	}
+	else if (AllKeyState[KEY_INPUT_BACK] != 0)
+	{
+		GameSceneNow = (int)GAME_SCENE_CHECK_TIME;
+	}
+
 	return;
 }
 
 VOID MY_GAME_CHECK_ENDLESS(VOID)
 {
+	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
+	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
+	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
+	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_Y] != 0)
 	{
+		StopSoundMem(bgm_play.handle);
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
 	else if (AllKeyState[KEY_INPUT_N] != 0)
@@ -292,18 +344,19 @@ VOID MY_GAME_CHECK_ENDLESS(VOID)
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
 
-	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
-	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
-	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
-
 	return;
 }
 
 VOID MY_GAME_CHECK_TIME(VOID)
 {
+	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
+	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
+	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
+	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_Y] != 0)
 	{
+		StopSoundMem(bgm_play.handle);
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
 	else if (AllKeyState[KEY_INPUT_N] != 0)
@@ -311,16 +364,15 @@ VOID MY_GAME_CHECK_TIME(VOID)
 		GameSceneNow = (int)GAME_SCENE_PLAY_TIME;
 	}
 
-	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
-	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
-	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
-
 	return;
 }
 
 VOID MY_GAME_END_OVER(VOID)
 {
+	DrawString(0, 0, "エンド画面(ゲームオーバー)", GetColor(255, 255, 255));
+	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
@@ -330,14 +382,15 @@ VOID MY_GAME_END_OVER(VOID)
 		GameSceneNow = (int)GAME_SCENE_RANKING;
 	}
 
-	DrawString(0, 0, "エンド画面(ゲームオーバー)", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
 	return;
 }
 
 VOID MY_GAME_END_CLEAR(VOID)
 {
+	DrawString(0, 0, "エンド画面(ゲームクリア)", GetColor(255, 255, 255));
+	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
+
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
@@ -347,10 +400,6 @@ VOID MY_GAME_END_CLEAR(VOID)
 		GameSceneNow = (int)GAME_SCENE_RANKING;
 	}
 	
-	DrawString(0, 0, "エンド画面(ゲームクリア)", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
-
 	return;
 }
 
