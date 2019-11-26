@@ -365,11 +365,10 @@ LRESULT CALLBACK MY_WNDPROC(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case WM_CLOSE:
 
-		MessageBox(hwnd, TEXT("ゲームを終了します"), TEXT("終了メッセージ"), MB_OK);
 		break;
 
 	case WM_RBUTTONDOWN:
-		SendMessage(hwnd, WM_CLOSE, 0, 0);
+		
 		break;
 
 	case WM_LBUTTONDOWN:
