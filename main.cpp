@@ -17,6 +17,8 @@
 #define GAME_SOUND_BGM_TITLE	"SOUND\\bgm_title.mp3"
 #define GAME_SOUND_BGM_PLAY		"SOUND\\bgm_title_2.mp3"
 
+#define GAME_IMAGE_BG_TITLE		"IMAGE\\title.png"
+
 
 enum GAME_SCENE {
 	GAME_SCENE_TITLE,			//タイトル画面
@@ -37,6 +39,15 @@ struct SOUND {
 	int playtype;
 };
 
+struct IMAGE {
+	int handle;
+	char filepath[128];
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
 BOOL IsWM_CREATE = FALSE;	//WM_CREATEが正常に動作したか判断する
 
 int StartTimeFps;					//測定開始時刻
@@ -51,6 +62,8 @@ int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 SOUND bgm_title;
 SOUND bgm_play;
 
+IMAGE bg_title;
+
 LRESULT CALLBACK MY_WNDPROC(HWND, UINT, WPARAM, LPARAM);	//自作ウィンドウプロシージャ
 
 VOID MY_FPS_UPDATE(VOID);	//FPSを計測、更新する関数
@@ -59,6 +72,8 @@ VOID MY_FPS_WAIT(VOID);		//FPS値を計測し、待つ関数
 VOID MY_ALL_KEYDOWN_UPDATE(VOID);	//キーの入力状態を更新する関数
 
 VOID MY_SOUND_LOAD(SOUND *,const char *);
+
+VOID MY_IMAGE_LOAD(IMAGE *, int, int, const char *);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
@@ -84,6 +99,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MY_SOUND_LOAD(&bgm_title, GAME_SOUND_BGM_TITLE);
 	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
+
+	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 
 	SetDrawScreen(DX_SCREEN_BACK);	//Draw系関数は裏画面に描画
 
@@ -212,6 +229,18 @@ VOID MY_SOUND_LOAD(SOUND *s, const char *path)
 	return;
 }
 
+VOID MY_IMAGE_LOAD(IMAGE *i, int x, int y, const char *path)
+{
+	wsprintf(i->filepath, path);
+	i->handle = LoadGraph(i->filepath);
+
+	GetGraphSize(i->handle, &i->width, &i->height);
+	i->x = x;
+	i->y = y;
+
+	return;
+}
+
 VOID MY_GAME_TITLE(VOID)
 {
 	if (CheckSoundMem(bgm_title.handle) == 0)
@@ -219,11 +248,14 @@ VOID MY_GAME_TITLE(VOID)
 		PlaySoundMem(bgm_title.handle, DX_PLAYTYPE_LOOP);
 	}
 
-	DrawString(0, 0, "タイトル画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "エンドレスモード：Ｅキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "タイムアタックモード：Ｔキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "ランキング：Ｒキー", GetColor(255, 255, 255));
-	DrawString(0, 120, "素材：Ｓキー", GetColor(255, 255, 255));
+	DrawGraph(bg_title.x, bg_title.y, bg_title.handle, TRUE);
+
+	DrawBox(155, 400, 405, 520, GetColor(0, 0, 0), TRUE);
+
+	DrawString(160, 405, "エンドレスモード：Ｅキー", GetColor(255, 255, 255));
+	DrawString(160, 435, "タイムアタックモード：Ｔキー", GetColor(255, 255, 255));
+	DrawString(160, 465, "ランキング：Ｒキー", GetColor(255, 255, 255));
+	DrawString(160, 495, "素材：Ｓキー", GetColor(255, 255, 255));
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
