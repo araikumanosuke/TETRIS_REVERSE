@@ -14,10 +14,13 @@
 
 #define GAME_FPS_SPEED	60
 
-#define GAME_SOUND_BGM_TITLE	"SOUND\\bgm_title.mp3"
-#define GAME_SOUND_BGM_PLAY		"SOUND\\bgm_title_2.mp3"
+#define GAME_SOUND_BGM_TITLE	"SOUND\\bgm_title_etc.mp3"
+#define GAME_SOUND_BGM_PLAY		"SOUND\\bgm_play.mp3"
 
-#define GAME_IMAGE_BG_TITLE		"IMAGE\\title.png"
+#define GAME_IMAGE_BG_TITLE		"IMAGE\\bg_title.png"
+#define GAME_IMAGE_BG_RANK		"IMAGE\\bg_rank.png"
+#define GAME_IMAGE_BG_END_OVER		"IMAGE\\bg_end_over.png"
+#define GAME_IMAGE_BG_END_CLEAR		"IMAGE\\bg_end_clear.png"
 
 
 enum GAME_SCENE {
@@ -59,10 +62,13 @@ char AllKeyState[256];	//全てのキーの状態が入る
 
 int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
-SOUND bgm_title;
+SOUND bgm_title_etc;
 SOUND bgm_play;
 
 IMAGE bg_title;
+IMAGE bg_rank;
+IMAGE bg_end_over;
+IMAGE bg_end_clear;
 
 LRESULT CALLBACK MY_WNDPROC(HWND, UINT, WPARAM, LPARAM);	//自作ウィンドウプロシージャ
 
@@ -97,10 +103,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	if (DxLib_Init() == -1)	{ return -1; }	//DxLib初期化処理
 
-	MY_SOUND_LOAD(&bgm_title, GAME_SOUND_BGM_TITLE);
+	MY_SOUND_LOAD(&bgm_title_etc, GAME_SOUND_BGM_TITLE);
 	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
+	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
+	MY_IMAGE_LOAD(&bg_end_over, 0, 0, GAME_IMAGE_BG_END_OVER);
+	MY_IMAGE_LOAD(&bg_end_clear, 0, 0, GAME_IMAGE_BG_END_CLEAR);
 
 	SetDrawScreen(DX_SCREEN_BACK);	//Draw系関数は裏画面に描画
 
@@ -161,7 +170,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MY_FPS_WAIT();		//FPSの処理(待つ)
 	}
 
-	DeleteSoundMem(bgm_title.handle);
+	DeleteSoundMem(bgm_title_etc.handle);
 	DeleteSoundMem(bgm_play.handle);
 
 	DxLib_End();
@@ -243,28 +252,21 @@ VOID MY_IMAGE_LOAD(IMAGE *i, int x, int y, const char *path)
 
 VOID MY_GAME_TITLE(VOID)
 {
-	if (CheckSoundMem(bgm_title.handle) == 0)
+	if (CheckSoundMem(bgm_title_etc.handle) == 0)
 	{
-		PlaySoundMem(bgm_title.handle, DX_PLAYTYPE_LOOP);
+		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
 	}
 
 	DrawGraph(bg_title.x, bg_title.y, bg_title.handle, TRUE);
 
-	DrawBox(155, 400, 405, 520, GetColor(0, 0, 0), TRUE);
-
-	DrawString(160, 405, "エンドレスモード：Ｅキー", GetColor(255, 255, 255));
-	DrawString(160, 435, "タイムアタックモード：Ｔキー", GetColor(255, 255, 255));
-	DrawString(160, 465, "ランキング：Ｒキー", GetColor(255, 255, 255));
-	DrawString(160, 495, "素材：Ｓキー", GetColor(255, 255, 255));
-
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
-		StopSoundMem(bgm_title.handle);
+		StopSoundMem(bgm_title_etc.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
 	else if (AllKeyState[KEY_INPUT_T] != 0)
 	{
-		StopSoundMem(bgm_title.handle);
+		StopSoundMem(bgm_title_etc.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_TIME;
 	}
 	else if (AllKeyState[KEY_INPUT_R] != 0)
@@ -281,9 +283,13 @@ VOID MY_GAME_TITLE(VOID)
 
 VOID MY_GAME_RANKING(VOID)
 {
-	DrawString(0, 0, "ランキング画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+	if (CheckSoundMem(bgm_title_etc.handle) == 0)
+	{
+		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
+	}
 	
+	DrawGraph(bg_rank.x, bg_rank.y, bg_rank.handle, TRUE);
+
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
@@ -294,6 +300,11 @@ VOID MY_GAME_RANKING(VOID)
 
 VOID MY_GAME_SOZAI(VOID)
 {
+	if (CheckSoundMem(bgm_title_etc.handle) == 0)
+	{
+		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
+	}
+	
 	DrawString(0, 0, "素材表示画面", GetColor(255, 255, 255));
 	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
@@ -401,10 +412,8 @@ VOID MY_GAME_CHECK_TIME(VOID)
 
 VOID MY_GAME_END_OVER(VOID)
 {
-	DrawString(0, 0, "エンド画面(ゲームオーバー)", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
-
+	DrawGraph(bg_end_over.x, bg_end_over.y, bg_end_over.handle, TRUE);
+	
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		GameSceneNow = (int)GAME_SCENE_TITLE;
@@ -419,9 +428,7 @@ VOID MY_GAME_END_OVER(VOID)
 
 VOID MY_GAME_END_CLEAR(VOID)
 {
-	DrawString(0, 0, "エンド画面(ゲームクリア)", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトル：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "ランキング：Ｒキー", GetColor(255, 255, 255));
+	DrawGraph(bg_end_clear.x, bg_end_clear.y, bg_end_clear.handle, TRUE);
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
