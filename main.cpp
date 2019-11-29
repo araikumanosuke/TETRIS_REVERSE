@@ -14,11 +14,13 @@
 
 #define GAME_FPS_SPEED	60
 
-#define GAME_SOUND_BGM_TITLE	"SOUND\\bgm_title_etc.mp3"
-#define GAME_SOUND_BGM_PLAY		"SOUND\\bgm_play.mp3"
+#define GAME_SOUND_BGM_TITLE		"SOUND\\bgm_title_etc.mp3"
+#define GAME_SOUND_BGM_PLAY			"SOUND\\bgm_play.mp3"
+#define GAME_SOUND_BGM_END_CLEAR	"SOUND\\bgm_end_clear.mp3"
+#define GAME_SOUND_BGM_END_OVER		"SOUND\\bgm_end_over.mp3"
 
-#define GAME_IMAGE_BG_TITLE		"IMAGE\\bg_title.png"
-#define GAME_IMAGE_BG_RANK		"IMAGE\\bg_rank.png"
+#define GAME_IMAGE_BG_TITLE			"IMAGE\\bg_title.png"
+#define GAME_IMAGE_BG_RANK			"IMAGE\\bg_rank.png"
 #define GAME_IMAGE_BG_END_OVER		"IMAGE\\bg_end_over.png"
 #define GAME_IMAGE_BG_END_CLEAR		"IMAGE\\bg_end_clear.png"
 
@@ -64,6 +66,8 @@ int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
 SOUND bgm_title_etc;
 SOUND bgm_play;
+SOUND bgm_end_clear;
+SOUND bgm_end_over;
 
 IMAGE bg_title;
 IMAGE bg_rank;
@@ -105,6 +109,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MY_SOUND_LOAD(&bgm_title_etc, GAME_SOUND_BGM_TITLE);
 	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
+	MY_SOUND_LOAD(&bgm_end_clear, GAME_SOUND_BGM_END_CLEAR);
+	MY_SOUND_LOAD(&bgm_end_over, GAME_SOUND_BGM_END_OVER);
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
@@ -172,6 +178,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	DeleteSoundMem(bgm_title_etc.handle);
 	DeleteSoundMem(bgm_play.handle);
+	DeleteSoundMem(bgm_end_clear.handle);
+	DeleteSoundMem(bgm_end_over.handle);
 
 	DxLib_End();
 
@@ -412,14 +420,21 @@ VOID MY_GAME_CHECK_TIME(VOID)
 
 VOID MY_GAME_END_OVER(VOID)
 {
+	if (CheckSoundMem(bgm_end_over.handle) == 0)
+	{
+		PlaySoundMem(bgm_end_over.handle, DX_PLAYTYPE_LOOP);
+	}
+	
 	DrawGraph(bg_end_over.x, bg_end_over.y, bg_end_over.handle, TRUE);
 	
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
+		StopSoundMem(bgm_end_over.handle);
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
 	else if (AllKeyState[KEY_INPUT_R] != 0)
 	{
+		StopSoundMem(bgm_end_over.handle);
 		GameSceneNow = (int)GAME_SCENE_RANKING;
 	}
 
@@ -428,14 +443,21 @@ VOID MY_GAME_END_OVER(VOID)
 
 VOID MY_GAME_END_CLEAR(VOID)
 {
+	if (CheckSoundMem(bgm_end_clear.handle) == 0)
+	{
+		PlaySoundMem(bgm_end_clear.handle, DX_PLAYTYPE_LOOP);
+	}
+	
 	DrawGraph(bg_end_clear.x, bg_end_clear.y, bg_end_clear.handle, TRUE);
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
+		StopSoundMem(bgm_end_clear.handle);
 		GameSceneNow = (int)GAME_SCENE_TITLE;
 	}
 	else if (AllKeyState[KEY_INPUT_R] != 0)
 	{
+		StopSoundMem(bgm_end_clear.handle);
 		GameSceneNow = (int)GAME_SCENE_RANKING;
 	}
 	
