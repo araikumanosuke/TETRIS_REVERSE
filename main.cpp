@@ -21,6 +21,8 @@
 
 #define GAME_IMAGE_BG_TITLE			"IMAGE\\bg_title.png"
 #define GAME_IMAGE_BG_RANK			"IMAGE\\bg_rank.png"
+#define GAME_IMAGE_BG_PLAY_ENDLESS	"IMAGE\\bg_play_endless.png"
+#define GAME_IMAGE_BG_PLAY_TIME		"IMAGE\\bg_play_time.png"
 #define GAME_IMAGE_BG_END_OVER		"IMAGE\\bg_end_over.png"
 #define GAME_IMAGE_BG_END_CLEAR		"IMAGE\\bg_end_clear.png"
 
@@ -64,6 +66,11 @@ char AllKeyState[256];	//全てのキーの状態が入る
 
 int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
+int syoki_flag = 0;
+
+int etc_fonthandle;
+int Go_fonthandle;
+
 SOUND bgm_title_etc;
 SOUND bgm_play;
 SOUND bgm_end_clear;
@@ -73,6 +80,8 @@ IMAGE bg_title;
 IMAGE bg_rank;
 IMAGE bg_end_over;
 IMAGE bg_end_clear;
+IMAGE bg_play_endless;
+IMAGE bg_play_time;
 
 LRESULT CALLBACK MY_WNDPROC(HWND, UINT, WPARAM, LPARAM);	//自作ウィンドウプロシージャ
 
@@ -114,8 +123,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
+	MY_IMAGE_LOAD(&bg_play_endless, 0, 0, GAME_IMAGE_BG_PLAY_ENDLESS);
+	MY_IMAGE_LOAD(&bg_play_time, 0, 0, GAME_IMAGE_BG_PLAY_TIME);
 	MY_IMAGE_LOAD(&bg_end_over, 0, 0, GAME_IMAGE_BG_END_OVER);
 	MY_IMAGE_LOAD(&bg_end_clear, 0, 0, GAME_IMAGE_BG_END_CLEAR);
+
+	etc_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 60, -1, DX_FONTTYPE_ANTIALIASING);
+	Go_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 120, -1, DX_FONTTYPE_ANTIALIASING);
+
+	ChangeFont("UD デジタル 教科書体 NK-B");
+	ChangeFontType(DX_FONTTYPE_ANTIALIASING);
 
 	SetDrawScreen(DX_SCREEN_BACK);	//Draw系関数は裏画面に描画
 
@@ -180,6 +197,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DeleteSoundMem(bgm_play.handle);
 	DeleteSoundMem(bgm_end_clear.handle);
 	DeleteSoundMem(bgm_end_over.handle);
+
+	DeleteFontToHandle(etc_fonthandle);
+	DeleteFontToHandle(Go_fonthandle);
 
 	DxLib_End();
 
@@ -260,6 +280,8 @@ VOID MY_IMAGE_LOAD(IMAGE *i, int x, int y, const char *path)
 
 VOID MY_GAME_TITLE(VOID)
 {
+	syoki_flag = 0;
+
 	if (CheckSoundMem(bgm_title_etc.handle) == 0)
 	{
 		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
@@ -326,14 +348,35 @@ VOID MY_GAME_SOZAI(VOID)
 
 VOID MY_GAME_PLAY_ENDLESS(VOID)
 {
-	if (CheckSoundMem(bgm_play.handle) == 0)
+	/*初期処理*/
+	DrawGraph(bg_play_endless.x, bg_play_endless.y, bg_play_endless.handle, TRUE);
+	
+	static int syoki_temp;
+
+	int syoki_count = GetNowCount();
+
+	if (syoki_flag == 0)
 	{
-		PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
+		syoki_temp = syoki_count;
+		syoki_flag = 1;
+	}
+	
+	if (syoki_count - syoki_temp < 1000)
+	{
+		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255),etc_fonthandle);
+	}
+	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
+	{
+		DrawStringToHandle(175, 400, "Go!", GetColor(255, 255, 255), Go_fonthandle);
+	}
+	else if (syoki_count - syoki_temp > 2000)
+	{
+		if (CheckSoundMem(bgm_play.handle) == 0)
+		{
+			PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
+		}
 	}
 
-	DrawString(0, 0, "プレイ画面(エンドレスモード)", GetColor(255, 255, 255));
-	DrawString(0, 30, "エンド画面：ＥＮＴＥＲキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "確認画面：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
 	if (AllKeyState[KEY_INPUT_RETURN] != 0)
 	{
@@ -350,15 +393,12 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 VOID MY_GAME_PLAY_TIME(VOID)
 {
+	DrawGraph(bg_play_time.x, bg_play_time.y, bg_play_time.handle, TRUE);
+	
 	if (CheckSoundMem(bgm_play.handle) == 0)
 	{
 		PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
 	}
-
-	DrawString(0, 0, "プレイ画面(タイムアタックモード)", GetColor(255, 255, 255));
-	DrawString(0, 30, "エンド画面(ゲームオーバー)：ＥＮＴＥＲキー", GetColor(255, 255, 255));
-	DrawString(0, 60, "エンド画面(ゲームクリア)：ＳＰＡＣＥキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "確認画面：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
 	if (AllKeyState[KEY_INPUT_RETURN] != 0)
 	{
@@ -380,6 +420,7 @@ VOID MY_GAME_PLAY_TIME(VOID)
 
 VOID MY_GAME_CHECK_ENDLESS(VOID)
 {
+	SetFontSize(24);
 	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
 	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
 	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
@@ -400,6 +441,7 @@ VOID MY_GAME_CHECK_ENDLESS(VOID)
 
 VOID MY_GAME_CHECK_TIME(VOID)
 {
+	SetFontSize(24);
 	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
 	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
 	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
