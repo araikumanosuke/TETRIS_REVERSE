@@ -19,13 +19,22 @@
 #define GAME_SOUND_BGM_END_CLEAR	"SOUND\\bgm_end_clear.mp3"
 #define GAME_SOUND_BGM_END_OVER		"SOUND\\bgm_end_over.mp3"
 
-#define GAME_IMAGE_BG_TITLE			"IMAGE\\bg_title.png"
-#define GAME_IMAGE_BG_RANK			"IMAGE\\bg_rank.png"
-#define GAME_IMAGE_BG_PLAY_ENDLESS	"IMAGE\\bg_play_endless.png"
-#define GAME_IMAGE_BG_PLAY_TIME		"IMAGE\\bg_play_time.png"
-#define GAME_IMAGE_BG_END_OVER		"IMAGE\\bg_end_over.png"
-#define GAME_IMAGE_BG_END_CLEAR		"IMAGE\\bg_end_clear.png"
+#define GAME_IMAGE_BG_TITLE				"IMAGE\\bg_title.png"
+#define GAME_IMAGE_BG_RANK				"IMAGE\\bg_rank.png"
+#define GAME_IMAGE_BG_PLAY_ENDLESS		"IMAGE\\bg_play_endless.png"
+#define GAME_IMAGE_BG_PLAY_TIME			"IMAGE\\bg_play_time.png"
+#define GAME_IMAGE_BG_END_OVER			"IMAGE\\bg_end_over.png"
+#define GAME_IMAGE_BG_END_CLEAR			"IMAGE\\bg_end_clear.png"
 
+#define GAME_IMAGE_PLAY_BLOCK_RED		"IMAGE\\red.png"
+#define GAME_IMAGE_PLAY_BLOCK_ORANGE	"IMAGE\\orange.png"
+#define GAME_IMAGE_PLAY_BLOCK_YELLOW	"IMAGE\\yellow.png"
+#define GAME_IMAGE_PLAY_BLOCK_GREEN		"IMAGE\\green.png"
+#define GAME_IMAGE_PLAY_BLOCK_RIGHTBLUE	"IMAGE\\rightblue.png"
+#define GAME_IMAGE_PLAY_BLOCK_BLUE		"IMAGE\\blue.png"
+#define GAME_IMAGE_PLAY_BLOCK_PURPLE	"IMAGE\\purple.png"
+
+#define MINO_KIND	7
 
 enum GAME_SCENE {
 	GAME_SCENE_TITLE,			//タイトル画面
@@ -39,6 +48,15 @@ enum GAME_SCENE {
 	GAME_SCENE_END_OVER			//エンド画面(ゲームオーバー)
 };
 
+enum BLOCK {
+	RED,
+	ORANGE,
+	YELLOW,
+	GREEN,
+	RIGHTBLUE,
+	BLUE,
+	PURPLE
+};
 
 struct SOUND {
 	int handle;
@@ -66,10 +84,62 @@ char AllKeyState[256];	//全てのキーの状態が入る
 
 int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
-int syoki_flag = 0;
+int syoki_flag;		//プレイ画面の初期処理で使う
+bool ground_flag;	//接地したか
+bool firsthold_flag;	//最初のHOLDかどうか
 
-int etc_fonthandle;
+int mino_rand;
+int nextmino_rand;
+
+int holdmino;
+
+int deleteline;
+int reverseline;
+int clearline;
+int score;
+
+int ready_fonthandle;
 int Go_fonthandle;
+int line_fonthandle;
+int score_fonthandle;
+
+int stage[18][10] =
+{
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+};
+
+int nextzone[4][3] = 
+{
+	{-1,-1,-1},
+	{-1,-1,-1},
+	{-1,-1,-1},
+	{-1,-1,-1}
+};
+
+int holdzone[4][3]=
+{
+	{-1,-1,-1},
+	{-1,-1,-1},
+	{-1,-1,-1},
+	{-1,-1,-1}
+};
 
 SOUND bgm_title_etc;
 SOUND bgm_play;
@@ -82,6 +152,14 @@ IMAGE bg_end_over;
 IMAGE bg_end_clear;
 IMAGE bg_play_endless;
 IMAGE bg_play_time;
+
+IMAGE block_red;
+IMAGE block_orange;
+IMAGE block_yellow;
+IMAGE block_green;
+IMAGE block_rightblue;
+IMAGE block_blue;
+IMAGE block_purple;
 
 LRESULT CALLBACK MY_WNDPROC(HWND, UINT, WPARAM, LPARAM);	//自作ウィンドウプロシージャ
 
@@ -128,8 +206,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MY_IMAGE_LOAD(&bg_end_over, 0, 0, GAME_IMAGE_BG_END_OVER);
 	MY_IMAGE_LOAD(&bg_end_clear, 0, 0, GAME_IMAGE_BG_END_CLEAR);
 
-	etc_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 60, -1, DX_FONTTYPE_ANTIALIASING);
+	MY_IMAGE_LOAD(&block_red, 0, 0, GAME_IMAGE_PLAY_BLOCK_RED);
+	MY_IMAGE_LOAD(&block_orange, 0, 0, GAME_IMAGE_PLAY_BLOCK_ORANGE);
+	MY_IMAGE_LOAD(&block_yellow, 0, 0, GAME_IMAGE_PLAY_BLOCK_YELLOW);
+	MY_IMAGE_LOAD(&block_green, 0, 0, GAME_IMAGE_PLAY_BLOCK_GREEN);
+	MY_IMAGE_LOAD(&block_rightblue, 0, 0, GAME_IMAGE_PLAY_BLOCK_RIGHTBLUE);
+	MY_IMAGE_LOAD(&block_blue, 0, 0, GAME_IMAGE_PLAY_BLOCK_BLUE);
+	MY_IMAGE_LOAD(&block_purple, 0, 0, GAME_IMAGE_PLAY_BLOCK_PURPLE);
+
+	ready_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 60, -1, DX_FONTTYPE_ANTIALIASING);
 	Go_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 120, -1, DX_FONTTYPE_ANTIALIASING);
+	score_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 40, -1, DX_FONTTYPE_ANTIALIASING);
+	line_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 48, -1, DX_FONTTYPE_ANTIALIASING);
 
 	ChangeFont("UD デジタル 教科書体 NK-B");
 	ChangeFontType(DX_FONTTYPE_ANTIALIASING);
@@ -198,8 +286,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DeleteSoundMem(bgm_end_clear.handle);
 	DeleteSoundMem(bgm_end_over.handle);
 
-	DeleteFontToHandle(etc_fonthandle);
+	DeleteFontToHandle(ready_fonthandle);
 	DeleteFontToHandle(Go_fonthandle);
+	DeleteFontToHandle(score_fonthandle);
+	DeleteFontToHandle(line_fonthandle);
 
 	DxLib_End();
 
@@ -282,6 +372,14 @@ VOID MY_GAME_TITLE(VOID)
 {
 	syoki_flag = 0;
 
+	ground_flag = false;	//接地したか
+	firsthold_flag = true;	//最初のHOLDかどうか
+
+	deleteline = 0;
+	reverseline = 40;
+	clearline = 200;
+	score = 0;
+
 	if (CheckSoundMem(bgm_title_etc.handle) == 0)
 	{
 		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
@@ -350,7 +448,13 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 {
 	/*初期処理*/
 	DrawGraph(bg_play_endless.x, bg_play_endless.y, bg_play_endless.handle, TRUE);
-	
+
+	DrawFormatStringToHandle(37, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
+	DrawFormatStringToHandle(476, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
+	DrawFormatStringToHandle(395, 25, GetColor(255, 255, 255), score_fonthandle, "%d", score);
+
+	int hold_taihi;	//HOLD時のミノ入れ替え処理にて使用
+
 	static int syoki_temp;
 
 	int syoki_count = GetNowCount();
@@ -363,20 +467,308 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	
 	if (syoki_count - syoki_temp < 1000)
 	{
-		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255),etc_fonthandle);
+		mino_rand = GetRand(MINO_KIND - 1);
+		nextmino_rand = GetRand(MINO_KIND - 1);
+		
+		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255),ready_fonthandle);
 	}
 	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
 	{
-		DrawStringToHandle(175, 400, "Go!", GetColor(255, 255, 255), Go_fonthandle);
+		DrawStringToHandle(170, 400, "Go!", GetColor(255, 255, 255), Go_fonthandle);
 	}
 	else if (syoki_count - syoki_temp > 2000)
 	{
+		syoki_count = syoki_temp + 2000;
+
 		if (CheckSoundMem(bgm_play.handle) == 0)
 		{
 			PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
 		}
-	}
 
+		//操作するミノ入れ替え処理
+		if (ground_flag == true)
+		{
+			mino_rand = nextmino_rand;
+			nextmino_rand = GetRand(MINO_KIND - 1);
+			ground_flag = false;
+		}
+		else if (AllKeyState[KEY_INPUT_SPACE] != 0)
+		{
+			if (firsthold_flag == true)
+			{
+				holdmino = mino_rand;
+				mino_rand = nextmino_rand;
+				nextmino_rand = GetRand(MINO_KIND - 1);
+				firsthold_flag = false;
+			}
+			else
+			{
+				hold_taihi = holdmino;
+				holdmino = mino_rand;
+				mino_rand = hold_taihi;
+			}
+		}
+
+		switch (mino_rand)
+		{
+		case RED:
+			stage[0][4] = RED;
+			stage[0][5] = RED;
+			stage[1][5] = RED;
+			stage[1][6] = RED;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == RED)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle,TRUE);
+					}
+				}
+			}
+			break;
+
+		case ORANGE:
+			stage[0][6] = ORANGE;
+			stage[1][4] = ORANGE;
+			stage[1][5] = ORANGE;
+			stage[1][6] = ORANGE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == ORANGE)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_orange.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case YELLOW:
+			stage[0][4] = YELLOW;
+			stage[0][5] = YELLOW;
+			stage[1][4] = YELLOW;
+			stage[1][5] = YELLOW;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == YELLOW)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_yellow.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case GREEN:
+			stage[0][5] = GREEN;
+			stage[0][6] = GREEN;
+			stage[1][4] = GREEN;
+			stage[1][5] = GREEN;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == GREEN)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_green.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case RIGHTBLUE:
+			stage[0][3] = RIGHTBLUE;
+			stage[0][4] = RIGHTBLUE;
+			stage[0][5] = RIGHTBLUE;
+			stage[0][6] = RIGHTBLUE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == RIGHTBLUE)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_rightblue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case BLUE:
+			stage[0][4] = BLUE;
+			stage[1][4] = BLUE;
+			stage[1][5] = BLUE;
+			stage[1][6] = BLUE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == BLUE)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_blue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case PURPLE:
+			stage[0][5] = PURPLE;
+			stage[1][4] = PURPLE;
+			stage[1][5] = PURPLE;
+			stage[1][6] = PURPLE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (stage[y][x] == PURPLE)
+					{
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_purple.handle, TRUE);
+					}
+				}
+			}
+			break;
+		}
+
+		switch (nextmino_rand)
+		{
+		case RED:
+			nextzone[1][0] = RED;
+			nextzone[1][1] = RED;
+			nextzone[2][1] = RED;
+			nextzone[2][2] = RED;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == RED)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_red.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		//次ここから
+		case ORANGE:
+			nextzone[0][6] = ORANGE;
+			nextzone[1][4] = ORANGE;
+			nextzone[1][5] = ORANGE;
+			nextzone[1][6] = ORANGE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == ORANGE)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_orange.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case YELLOW:
+			nextzone[0][4] = YELLOW;
+			nextzone[0][5] = YELLOW;
+			nextzone[1][4] = YELLOW;
+			nextzone[1][5] = YELLOW;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == YELLOW)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_yellow.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case GREEN:
+			nextzone[0][5] = GREEN;
+			nextzone[0][6] = GREEN;
+			nextzone[1][4] = GREEN;
+			nextzone[1][5] = GREEN;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == GREEN)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_green.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case RIGHTBLUE:
+			nextzone[0][3] = RIGHTBLUE;
+			nextzone[0][4] = RIGHTBLUE;
+			nextzone[0][5] = RIGHTBLUE;
+			nextzone[0][6] = RIGHTBLUE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == RIGHTBLUE)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_rightblue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case BLUE:
+			nextzone[0][4] = BLUE;
+			nextzone[1][4] = BLUE;
+			nextzone[1][5] = BLUE;
+			nextzone[1][6] = BLUE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == BLUE)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_blue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case PURPLE:
+			nextzone[0][5] = PURPLE;
+			nextzone[1][4] = PURPLE;
+			nextzone[1][5] = PURPLE;
+			nextzone[1][6] = PURPLE;
+
+			for (int y = 0; y < 18; y++)
+			{
+				for (int x = 0; x < 10; x++)
+				{
+					if (nextzone[y][x] == PURPLE)
+					{
+						DrawGraph(x * 30 + 445, y * 30 + 75, block_purple.handle, TRUE);
+					}
+				}
+			}
+			break;
+		}
+
+	}
 
 	if (AllKeyState[KEY_INPUT_RETURN] != 0)
 	{
