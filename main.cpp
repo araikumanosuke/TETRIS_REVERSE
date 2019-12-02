@@ -126,7 +126,7 @@ int stage[18][10] =
 	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
 };
 
-int nextzone[4][3] = 
+int nextzone[4][3] =
 {
 	{-1,-1,-1},
 	{-1,-1,-1},
@@ -134,7 +134,7 @@ int nextzone[4][3] =
 	{-1,-1,-1}
 };
 
-int holdzone[4][3]=
+int holdzone[4][3] =
 {
 	{-1,-1,-1},
 	{-1,-1,-1},
@@ -169,7 +169,7 @@ VOID MY_FPS_WAIT(VOID);		//FPS値を計測し、待つ関数
 
 VOID MY_ALL_KEYDOWN_UPDATE(VOID);	//キーの入力状態を更新する関数
 
-VOID MY_SOUND_LOAD(SOUND *,const char *);
+VOID MY_SOUND_LOAD(SOUND *, const char *);
 
 VOID MY_IMAGE_LOAD(IMAGE *, int, int, const char *);
 
@@ -193,7 +193,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetMainWindowText(TEXT(GAME_WINDOW_NAME));		//タイトルの文字
 
-	if (DxLib_Init() == -1)	{ return -1; }	//DxLib初期化処理
+	if (DxLib_Init() == -1) { return -1; }	//DxLib初期化処理
 
 	MY_SOUND_LOAD(&bgm_title_etc, GAME_SOUND_BGM_TITLE);
 	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
@@ -230,7 +230,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (ProcessMessage() != 0) { break; }	//メッセージ処理の結果がエラーの時、強制終了
 
 		if (ClearDrawScreen() != 0) { break; }	//画面を消去出来なかった時、強制終了
-	
+
 		MY_ALL_KEYDOWN_UPDATE();
 
 		switch (GameSceneNow)
@@ -278,7 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MY_FPS_UPDATE();	//FPSの処理(更新)
 
 		ScreenFlip();		//モニタのリフレッシュレートの速さで裏画面を再描画
-		
+
 		MY_FPS_WAIT();		//FPSの処理(待つ)
 	}
 
@@ -436,7 +436,7 @@ VOID MY_GAME_RANKING(VOID)
 	{
 		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
 	}
-	
+
 	DrawGraph(bg_rank.x, bg_rank.y, bg_rank.handle, TRUE);
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
@@ -453,7 +453,7 @@ VOID MY_GAME_SOZAI(VOID)
 	{
 		PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
 	}
-	
+
 	DrawString(0, 0, "素材表示画面", GetColor(255, 255, 255));
 	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
 
@@ -485,13 +485,13 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 		syoki_temp = syoki_count;
 		syoki_flag = 1;
 	}
-	
+
 	if (syoki_count - syoki_temp < 1000)
 	{
 		mino_rand = GetRand(MINO_KIND - 1);
 		nextmino_rand = GetRand(MINO_KIND - 1);
-		
-		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255),ready_fonthandle);
+
+		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255), ready_fonthandle);
 	}
 	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
 	{
@@ -551,7 +551,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage[y][x] == RED)
 					{
-						DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle,TRUE);
+						DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
 					}
 				}
 			}
@@ -944,7 +944,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 VOID MY_GAME_PLAY_TIME(VOID)
 {
 	DrawGraph(bg_play_time.x, bg_play_time.y, bg_play_time.handle, TRUE);
-	
+
 	if (CheckSoundMem(bgm_play.handle) == 0)
 	{
 		PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
@@ -1016,9 +1016,9 @@ VOID MY_GAME_END_OVER(VOID)
 	{
 		PlaySoundMem(bgm_end_over.handle, DX_PLAYTYPE_LOOP);
 	}
-	
+
 	DrawGraph(bg_end_over.x, bg_end_over.y, bg_end_over.handle, TRUE);
-	
+
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
 		StopSoundMem(bgm_end_over.handle);
@@ -1039,7 +1039,7 @@ VOID MY_GAME_END_CLEAR(VOID)
 	{
 		PlaySoundMem(bgm_end_clear.handle, DX_PLAYTYPE_LOOP);
 	}
-	
+
 	DrawGraph(bg_end_clear.x, bg_end_clear.y, bg_end_clear.handle, TRUE);
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
@@ -1052,7 +1052,7 @@ VOID MY_GAME_END_CLEAR(VOID)
 		StopSoundMem(bgm_end_clear.handle);
 		GameSceneNow = (int)GAME_SCENE_RANKING;
 	}
-	
+
 	return;
 }
 
@@ -1070,7 +1070,7 @@ LRESULT CALLBACK MY_WNDPROC(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_RBUTTONDOWN:
-		
+
 		break;
 
 	case WM_LBUTTONDOWN:
