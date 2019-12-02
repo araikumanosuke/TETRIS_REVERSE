@@ -84,9 +84,10 @@ char AllKeyState[256];	//全てのキーの状態が入る
 
 int GameSceneNow = (int)GAME_SCENE_TITLE;	//最初のゲーム画面をタイトルに設定
 
-int syoki_flag;		//プレイ画面の初期処理で使う
-bool ground_flag;	//接地したか
+int syoki_flag;			//プレイ画面の初期処理で使う
+bool ground_flag;		//接地したか
 bool firsthold_flag;	//最初のHOLDかどうか
+bool holdfinish_flag;	//接地するまでにHOLDを2回以上使われないためのフラグ
 
 int mino_rand;
 int nextmino_rand;
@@ -370,15 +371,20 @@ VOID MY_IMAGE_LOAD(IMAGE *i, int x, int y, const char *path)
 
 VOID MY_GAME_TITLE(VOID)
 {
-	syoki_flag = 0;
+	//syoki_flag = 0;
 
-	ground_flag = false;	//接地したか
-	firsthold_flag = true;	//最初のHOLDかどうか
+	//ground_flag = false;		//接地したか
+	//firsthold_flag = true;		//最初のHOLDかどうか
+	//holdfinish_flag = false;	//接地する前にHOLDが一度済んでいるか
 
-	deleteline = 0;
-	reverseline = 40;
-	clearline = 200;
-	score = 0;
+	//deleteline = 0;
+	//reverseline = 40;
+	//clearline = 200;
+	//score = 0;
+
+	//mino_rand = -1;
+	//nextmino_rand = -1;
+	//holdmino = -1;
 
 	if (CheckSoundMem(bgm_title_etc.handle) == 0)
 	{
@@ -389,6 +395,21 @@ VOID MY_GAME_TITLE(VOID)
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
+		syoki_flag = 0;
+
+		ground_flag = false;		//接地したか
+		firsthold_flag = true;		//最初のHOLDかどうか
+		holdfinish_flag = false;	//接地する前にHOLDが一度済んでいるか
+
+		deleteline = 0;
+		reverseline = 40;
+		clearline = 200;
+		score = 0;
+
+		mino_rand = -1;
+		nextmino_rand = -1;
+		holdmino = -1;
+
 		StopSoundMem(bgm_title_etc.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
@@ -491,24 +512,31 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			mino_rand = nextmino_rand;
 			nextmino_rand = GetRand(MINO_KIND - 1);
 			ground_flag = false;
+			holdfinish_flag = false;
 		}
 		else if (AllKeyState[KEY_INPUT_SPACE] != 0)
 		{
-			if (firsthold_flag == true)
+			if (holdfinish_flag == false)
 			{
-				holdmino = mino_rand;
-				mino_rand = nextmino_rand;
-				nextmino_rand = GetRand(MINO_KIND - 1);
-				firsthold_flag = false;
-			}
-			else
-			{
-				hold_taihi = holdmino;
-				holdmino = mino_rand;
-				mino_rand = hold_taihi;
+				if (firsthold_flag == true)
+				{
+					holdmino = mino_rand;
+					mino_rand = nextmino_rand;
+					nextmino_rand = GetRand(MINO_KIND - 1);
+					firsthold_flag = false;
+					holdfinish_flag = true;
+				}
+				else
+				{
+					hold_taihi = holdmino;
+					holdmino = mino_rand;
+					mino_rand = hold_taihi;
+					holdfinish_flag = true;
+				}
 			}
 		}
 
+		//操作するミノ
 		switch (mino_rand)
 		{
 		case RED:
@@ -638,6 +666,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 		}
 
+		//次に操作するミノ
 		switch (nextmino_rand)
 		{
 		case RED:
@@ -646,9 +675,9 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			nextzone[2][1] = RED;
 			nextzone[2][2] = RED;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == RED)
 					{
@@ -658,16 +687,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			}
 			break;
 
-		//次ここから
 		case ORANGE:
-			nextzone[0][6] = ORANGE;
-			nextzone[1][4] = ORANGE;
-			nextzone[1][5] = ORANGE;
-			nextzone[1][6] = ORANGE;
+			nextzone[1][2] = ORANGE;
+			nextzone[2][0] = ORANGE;
+			nextzone[2][1] = ORANGE;
+			nextzone[2][2] = ORANGE;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == ORANGE)
 					{
@@ -678,14 +706,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 
 		case YELLOW:
-			nextzone[0][4] = YELLOW;
-			nextzone[0][5] = YELLOW;
-			nextzone[1][4] = YELLOW;
-			nextzone[1][5] = YELLOW;
+			nextzone[1][0] = YELLOW;
+			nextzone[1][1] = YELLOW;
+			nextzone[2][0] = YELLOW;
+			nextzone[2][1] = YELLOW;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == YELLOW)
 					{
@@ -696,14 +724,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 
 		case GREEN:
-			nextzone[0][5] = GREEN;
-			nextzone[0][6] = GREEN;
-			nextzone[1][4] = GREEN;
-			nextzone[1][5] = GREEN;
+			nextzone[1][1] = GREEN;
+			nextzone[1][2] = GREEN;
+			nextzone[2][0] = GREEN;
+			nextzone[2][1] = GREEN;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == GREEN)
 					{
@@ -714,14 +742,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 
 		case RIGHTBLUE:
-			nextzone[0][3] = RIGHTBLUE;
-			nextzone[0][4] = RIGHTBLUE;
-			nextzone[0][5] = RIGHTBLUE;
-			nextzone[0][6] = RIGHTBLUE;
+			nextzone[0][1] = RIGHTBLUE;
+			nextzone[1][1] = RIGHTBLUE;
+			nextzone[2][1] = RIGHTBLUE;
+			nextzone[3][1] = RIGHTBLUE;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == RIGHTBLUE)
 					{
@@ -732,14 +760,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 
 		case BLUE:
-			nextzone[0][4] = BLUE;
-			nextzone[1][4] = BLUE;
-			nextzone[1][5] = BLUE;
-			nextzone[1][6] = BLUE;
+			nextzone[1][0] = BLUE;
+			nextzone[2][0] = BLUE;
+			nextzone[2][1] = BLUE;
+			nextzone[2][2] = BLUE;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == BLUE)
 					{
@@ -750,18 +778,148 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			break;
 
 		case PURPLE:
-			nextzone[0][5] = PURPLE;
-			nextzone[1][4] = PURPLE;
-			nextzone[1][5] = PURPLE;
-			nextzone[1][6] = PURPLE;
+			nextzone[1][1] = PURPLE;
+			nextzone[2][0] = PURPLE;
+			nextzone[2][1] = PURPLE;
+			nextzone[2][2] = PURPLE;
 
-			for (int y = 0; y < 18; y++)
+			for (int y = 0; y < 4; y++)
 			{
-				for (int x = 0; x < 10; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					if (nextzone[y][x] == PURPLE)
 					{
 						DrawGraph(x * 30 + 445, y * 30 + 75, block_purple.handle, TRUE);
+					}
+				}
+			}
+			break;
+		}
+
+		//HOLDしておくミノ
+		switch (holdmino)
+		{
+		case RED:
+			holdzone[1][0] = RED;
+			holdzone[1][1] = RED;
+			holdzone[2][1] = RED;
+			holdzone[2][2] = RED;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == RED)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_red.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case ORANGE:
+			holdzone[1][2] = ORANGE;
+			holdzone[2][0] = ORANGE;
+			holdzone[2][1] = ORANGE;
+			holdzone[2][2] = ORANGE;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == ORANGE)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_orange.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case YELLOW:
+			holdzone[1][0] = YELLOW;
+			holdzone[1][1] = YELLOW;
+			holdzone[2][0] = YELLOW;
+			holdzone[2][1] = YELLOW;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == YELLOW)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_yellow.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case GREEN:
+			holdzone[1][1] = GREEN;
+			holdzone[1][2] = GREEN;
+			holdzone[2][0] = GREEN;
+			holdzone[2][1] = GREEN;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == GREEN)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_green.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case RIGHTBLUE:
+			holdzone[0][1] = RIGHTBLUE;
+			holdzone[1][1] = RIGHTBLUE;
+			holdzone[2][1] = RIGHTBLUE;
+			holdzone[3][1] = RIGHTBLUE;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == RIGHTBLUE)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_rightblue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case BLUE:
+			holdzone[1][0] = BLUE;
+			holdzone[2][0] = BLUE;
+			holdzone[2][1] = BLUE;
+			holdzone[2][2] = BLUE;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == BLUE)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_blue.handle, TRUE);
+					}
+				}
+			}
+			break;
+
+		case PURPLE:
+			holdzone[1][1] = PURPLE;
+			holdzone[2][0] = PURPLE;
+			holdzone[2][1] = PURPLE;
+			holdzone[2][2] = PURPLE;
+
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					if (holdzone[y][x] == PURPLE)
+					{
+						DrawGraph(x * 30 + 25, y * 30 + 75, block_purple.handle, TRUE);
 					}
 				}
 			}
