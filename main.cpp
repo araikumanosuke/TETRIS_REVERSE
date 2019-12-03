@@ -88,6 +88,7 @@ int syoki_flag;			//プレイ画面の初期処理で使う
 bool ground_flag;		//接地したか
 bool firsthold_flag;	//最初のHOLDかどうか
 bool holdfinish_flag;	//接地するまでにHOLDを2回以上使われないためのフラグ
+bool flg_r;
 
 int mino_rand;
 int nextmino_rand;
@@ -400,7 +401,10 @@ VOID MY_GAME_TITLE(VOID)
 		ground_flag = false;		//接地したか
 		firsthold_flag = true;		//最初のHOLDかどうか
 		holdfinish_flag = false;	//接地する前にHOLDが一度済んでいるか
-
+		flg_r = true;
+		
+		
+		bool flg_r = true;
 		deleteline = 0;
 		reverseline = 40;
 		clearline = 200;
@@ -477,8 +481,10 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	int hold_taihi;	//HOLD時のミノ入れ替え処理にて使用
 
 	static int syoki_temp;
+	static int tmp_r;
 
 	int syoki_count = GetNowCount();
+	int cnt_r = GetNowCount();
 
 	if (syoki_flag == 0)
 	{
@@ -497,7 +503,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	{
 		DrawStringToHandle(170, 400, "Go!", GetColor(255, 255, 255), Go_fonthandle);
 	}
-	else if (syoki_count - syoki_temp > 2000)
+	else if (syoki_count - syoki_temp >= 2000)
 	{
 		syoki_count = syoki_temp + 2000;
 
@@ -540,18 +546,395 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 		switch (mino_rand)
 		{
 		case RED:
-			stage[0][4] = RED;
-			stage[0][5] = RED;
-			stage[1][5] = RED;
-			stage[1][6] = RED;
-
-			for (int y = 0; y < 18; y++)
+			if (flg_r == true)
 			{
-				for (int x = 0; x < 10; x++)
+				tmp_r = cnt_r;
+				flg_r = false;
+			}
+
+			if (cnt_r - tmp_r > 0 && cnt_r - tmp_r <= 1000)
+			{
+				stage[0][4] = RED;
+				stage[0][5] = RED;
+				stage[1][5] = RED;
+				stage[1][6] = RED;
+
+				for (int y = 0; y < 18; y++)
 				{
-					if (stage[y][x] == RED)
+					for (int x = 0; x < 10; x++)
 					{
-						DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 1000 && cnt_r - tmp_r <= 2000)
+			{
+				stage[0][4] = -1;
+				stage[0][5] = -1;
+				stage[1][5] = -1;
+				stage[1][6] = -1;
+
+				stage[1][4] = RED;
+				stage[1][5] = RED;
+				stage[2][5] = RED;
+				stage[2][6] = RED;
+					
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 2000 && cnt_r - tmp_r <= 3000)
+			{
+				stage[1][4] = -1;
+				stage[1][5] = -1;
+				stage[2][5] = -1;
+				stage[2][6] = -1;
+
+				stage[2][4] = RED;
+				stage[2][5] = RED;
+				stage[3][5] = RED;
+				stage[3][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 3000 && cnt_r - tmp_r <= 4000)
+			{
+				stage[2][4] = -1;
+				stage[2][5] = -1;
+				stage[3][5] = -1;
+				stage[3][6] = -1;
+
+				stage[3][4] = RED;
+				stage[3][5] = RED;
+				stage[4][5] = RED;
+				stage[4][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 4000 && cnt_r - tmp_r <= 5000)
+			{
+				stage[3][4] = -1;
+				stage[3][5] = -1;
+				stage[4][5] = -1;
+				stage[4][6] = -1;
+
+				stage[4][4] = RED;
+				stage[4][5] = RED;
+				stage[5][5] = RED;
+				stage[5][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 5000 && cnt_r - tmp_r <= 6000)
+			{
+				stage[4][4] = -1;
+				stage[4][5] = -1;
+				stage[5][5] = -1;
+				stage[5][6] = -1;
+
+				stage[5][4] = RED;
+				stage[5][5] = RED;
+				stage[6][5] = RED;
+				stage[6][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 6000 && cnt_r - tmp_r <= 7000)
+			{
+				stage[5][4] = -1;
+				stage[5][5] = -1;
+				stage[6][5] = -1;
+				stage[6][6] = -1;
+
+				stage[6][4] = RED;
+				stage[6][5] = RED;
+				stage[7][5] = RED;
+				stage[7][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 7000 && cnt_r - tmp_r <= 8000)
+			{
+				stage[6][4] = -1;
+				stage[6][5] = -1;
+				stage[7][5] = -1;
+				stage[7][6] = -1;
+
+				stage[7][4] = RED;
+				stage[7][5] = RED;
+				stage[8][5] = RED;
+				stage[8][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 8000 && cnt_r - tmp_r <= 9000)
+			{
+				stage[7][4] = -1;
+				stage[7][5] = -1;
+				stage[8][5] = -1;
+				stage[8][6] = -1;
+
+				stage[8][4] = RED;
+				stage[8][5] = RED;
+				stage[9][5] = RED;
+				stage[9][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 9000 && cnt_r - tmp_r <= 10000)
+			{
+				stage[8][4] = -1;
+				stage[8][5] = -1;
+				stage[9][5] = -1;
+				stage[9][6] = -1;
+
+				stage[9][4] = RED;
+				stage[9][5] = RED;
+				stage[10][5] = RED;
+				stage[10][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 10000 && cnt_r - tmp_r <= 11000)
+			{
+				stage[9][4] = -1;
+				stage[9][5] = -1;
+				stage[10][5] = -1;
+				stage[10][6] = -1;
+
+				stage[10][4] = RED;
+				stage[10][5] = RED;
+				stage[11][5] = RED;
+				stage[11][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 11000 && cnt_r - tmp_r <= 12000)
+			{
+				stage[10][4] = -1;
+				stage[10][5] = -1;
+				stage[11][5] = -1;
+				stage[11][6] = -1;
+
+				stage[11][4] = RED;
+				stage[11][5] = RED;
+				stage[12][5] = RED;
+				stage[12][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 12000 && cnt_r - tmp_r <= 13000)
+			{
+				stage[11][4] = -1;
+				stage[11][5] = -1;
+				stage[12][5] = -1;
+				stage[12][6] = -1;
+
+				stage[12][4] = RED;
+				stage[12][5] = RED;
+				stage[13][5] = RED;
+				stage[13][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 13000 && cnt_r - tmp_r <= 14000)
+			{
+				stage[12][4] = -1;
+				stage[12][5] = -1;
+				stage[13][5] = -1;
+				stage[13][6] = -1;
+
+				stage[13][4] = RED;
+				stage[13][5] = RED;
+				stage[14][5] = RED;
+				stage[14][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 14000 && cnt_r - tmp_r <= 15000)
+			{
+				stage[13][4] = -1;
+				stage[13][5] = -1;
+				stage[14][5] = -1;
+				stage[14][6] = -1;
+
+				stage[14][4] = RED;
+				stage[14][5] = RED;
+				stage[15][5] = RED;
+				stage[15][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 15000 && cnt_r - tmp_r <= 16000)
+			{
+				stage[14][4] = -1;
+				stage[14][5] = -1;
+				stage[15][5] = -1;
+				stage[15][6] = -1;
+
+				stage[15][4] = RED;
+				stage[15][5] = RED;
+				stage[16][5] = RED;
+				stage[16][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
+					}
+				}
+			}
+			else if (cnt_r - tmp_r > 16000)
+			{
+				stage[15][4] = -1;
+				stage[15][5] = -1;
+				stage[16][5] = -1;
+				stage[16][6] = -1;
+
+				stage[16][4] = RED;
+				stage[16][5] = RED;
+				stage[17][5] = RED;
+				stage[17][6] = RED;
+
+				for (int y = 0; y < 18; y++)
+				{
+					for (int x = 0; x < 10; x++)
+					{
+						if (stage[y][x] == RED)
+						{
+							DrawGraph(x * 30 + 130, y * 30 + 75, block_red.handle, TRUE);
+						}
 					}
 				}
 			}
