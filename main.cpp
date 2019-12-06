@@ -204,7 +204,9 @@ VOID MY_SOUND_LOAD(SOUND *, const char *);
 VOID MY_IMAGE_LOAD(IMAGE *, int, int, const char *);
 
 VOID MOVE_BLOCK(IMAGE *, BLOCK);
-VOID HOLD(VOID);
+VOID PUT_BLOCK(VOID);
+VOID INIT_STAGE(VOID);
+bool HOLD(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
@@ -431,30 +433,45 @@ VOID PUT_BLOCK(BLOCK c)
 	}
 }
 
-VOID HOLD(VOID)
+VOID INIT_STAGE(VOID)
 {
-	if (AllKeyState[KEY_INPUT_SPACE] != 0)
+	for (int y = 0; y < 18; y++)
 	{
-		if (holdfinish_flag == false)
+		for (int x = 0; x < 10; x++)
 		{
-			if (firsthold_flag == true)
-			{
-				holdmino = mino_rand;
-				mino_rand = nextmino_rand;
-				nextmino_rand = GetRand(MINO_KIND - 1);
-				firsthold_flag = false;
-				holdfinish_flag = true;
-			}
-			else
-			{
-				hold_taihi = holdmino;
-				holdmino = mino_rand;
-				mino_rand = hold_taihi;
-				holdfinish_flag = true;
-			}
+			stage_move[y][x] = -1;
 		}
 	}
-	return;
+}
+
+bool HOLD(VOID)
+{	
+	if (holdfinish_flag == false)
+	{
+		if (firsthold_flag == true)
+		{
+			INIT_STAGE();
+			holdmino = mino_rand;
+			mino_rand = nextmino_rand;
+			nextmino_rand = GetRand(MINO_KIND - 1);
+			firsthold_flag = false;
+			holdfinish_flag = true;
+
+			return true;
+		}
+		else
+		{
+			INIT_STAGE();
+			hold_taihi = holdmino;
+			holdmino = mino_rand;
+			mino_rand = hold_taihi;
+			holdfinish_flag = true;
+
+			return true;
+		}
+	}
+
+	return false;
 }
 VOID MY_GAME_TITLE(VOID)
 {
@@ -465,31 +482,33 @@ VOID MY_GAME_TITLE(VOID)
 
 	DrawGraph(bg_title.x, bg_title.y, bg_title.handle, TRUE);
 
+	INIT_STAGE();
+
+	syoki_flag = 0;
+
+	//ground_flag = false;		//接地したか
+	firsthold_flag = true;		//最初のHOLDかどうか
+	holdfinish_flag = false;	//接地する前にHOLDが一度済んでいるか
+
+	flg_r = true;
+	flg_o = true;
+	flg_y = true;
+	flg_g = true;
+	flg_rb = true;
+	flg_b = true;
+	flg_p = true;
+
+	deleteline = 0;
+	reverseline = 40;
+	clearline = 200;
+	score = 0;
+
+	mino_rand = -1;
+	nextmino_rand = -1;
+	holdmino = -1;
+
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
-		syoki_flag = 0;
-
-		//ground_flag = false;		//接地したか
-		firsthold_flag = true;		//最初のHOLDかどうか
-		holdfinish_flag = false;	//接地する前にHOLDが一度済んでいるか
-		
-		flg_r = true;
-		flg_o = true;
-		flg_y = true;
-		flg_g = true;
-		flg_rb = true;
-		flg_b = true;
-		flg_p = true;
-
-		deleteline = 0;
-		reverseline = 40;
-		clearline = 200;
-		score = 0;
-
-		mino_rand = -1;
-		nextmino_rand = -1;
-		holdmino = -1;
-
 		//StopSoundMem(bgm_title_etc.handle);
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
@@ -623,7 +642,16 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_r - tmp_r > cnt && cnt_r - tmp_r <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_r = true;
+							cnt_r = 0;
+							tmp_r = 0;
+							break;
+						}						
+					}
 
 					if (cnt_r - tmp_r > 1000)
 					{
@@ -639,8 +667,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					stage_move[x_move + 1][6] = RED;
 				}
 			}
-					
-			if (cnt_r - tmp_r == 17000)
+
+			if (cnt_r - tmp_r >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -648,6 +676,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_r = true;
 				cnt_r = 0;
 				tmp_r = 0;
+				break;
 			}
 
 			break;
@@ -664,7 +693,16 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_o - tmp_o > cnt && cnt_o - tmp_o <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_o = true;
+							cnt_o = 0;
+							tmp_o = 0;
+							break;
+						}						
+					}
 
 					if (cnt_o - tmp_o > 1000)
 					{
@@ -681,7 +719,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 			}
 
-			if (cnt_o - tmp_o == 17000)
+			if (cnt_o - tmp_o >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -689,6 +727,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_o = true;
 				cnt_o = 0;
 				tmp_o = 0;
+				break;
 			}
 			break;
 
@@ -704,7 +743,16 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_y - tmp_y > cnt && cnt_y - tmp_y <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_y = true;
+							cnt_y = 0;
+							tmp_y = 0;
+							break;
+						}						
+					}
 
 					if (cnt_y - tmp_y > 1000)
 					{
@@ -721,7 +769,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 			}
 
-			if (cnt_y - tmp_y == 17000)
+			if (cnt_y - tmp_y >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -729,6 +777,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_y = true;
 				cnt_y = 0;
 				tmp_y = 0;
+				break;
 			}
 			break;
 
@@ -744,8 +793,17 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_g - tmp_g > cnt && cnt_g - tmp_g <= cnt + 1000)
 				{
-					HOLD();
-					
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_g = true;
+							cnt_g = 0;
+							tmp_g = 0;
+							break;
+						}					
+					}
+
 					if (cnt_g - tmp_g > 1000)
 					{
 						stage_move[x_move - 1][5] = -1;
@@ -761,7 +819,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 			}
 
-			if (cnt_g - tmp_g == 17000)
+			if (cnt_g - tmp_g >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -769,6 +827,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_g = true;
 				cnt_g = 0;
 				tmp_g = 0;
+				break;
 			}
 			break;
 
@@ -784,7 +843,16 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_rb - tmp_rb > cnt && cnt_rb - tmp_rb <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_rb = true;
+							cnt_rb = 0;
+							tmp_rb = 0;
+							break;
+						}					
+					}
 
 					if (cnt_rb - tmp_rb > 1000)
 					{
@@ -801,7 +869,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 			}
 
-			if (cnt_rb - tmp_rb == 17000)
+			if (cnt_rb - tmp_rb >= 18000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -809,6 +877,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_rb = true;
 				cnt_rb = 0;
 				tmp_rb = 0;
+				break;
 			}
 			break;
 
@@ -824,14 +893,23 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_b - tmp_b > cnt && cnt_b - tmp_b <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_b = true;
+							cnt_b = 0;
+							tmp_b = 0;
+							break;
+						}						
+					}
 
 					if (cnt_b - tmp_b > 1000)
 					{
 						stage_move[x_move - 1][4] = -1;
 						stage_move[x_move][4] = -1;
 						stage_move[x_move][5] = -1;
-						stage_move[x_move][6] = 1;
+						stage_move[x_move][6] = -1;
 					}
 
 					stage_move[x_move][4] = BLUE;
@@ -840,7 +918,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					stage_move[x_move + 1][6] = BLUE;
 				}
 			}
-			if (cnt_b - tmp_b == 17000)
+			if (cnt_b - tmp_b >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -848,6 +926,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_b = true;
 				cnt_b = 0;
 				tmp_b = 0;
+				break;
 			}
 			break;
 
@@ -863,14 +942,23 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				if (cnt_p - tmp_p > cnt && cnt_p - tmp_p <= cnt + 1000)
 				{
-					HOLD();
+					if (AllKeyState[KEY_INPUT_SPACE] != 0)
+					{
+						if (HOLD())
+						{
+							flg_p = true;
+							cnt_p = 0;
+							tmp_p = 0;
+							break;
+						}	
+					}
 
 					if (cnt_p - tmp_p > 1000)
 					{
 						stage_move[x_move - 1][5] = -1;
 						stage_move[x_move][4] = -1;
 						stage_move[x_move][5] = -1;
-						stage_move[x_move][6] = 1;
+						stage_move[x_move][6] = -1;
 					}
 
 					stage_move[x_move][5] = PURPLE;
@@ -880,7 +968,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 			}
 
-			if (cnt_p - tmp_p == 17000)
+			if (cnt_p - tmp_p >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -888,6 +976,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				flg_p = true;
 				cnt_p = 0;
 				tmp_p = 0;
+				break;
 			}
 			break;
 		}
