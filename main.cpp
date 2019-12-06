@@ -157,6 +157,27 @@ int stage_put[18][10] =
 	{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
 };
 
+bool stage_put_flag[18][10]=
+{
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false},
+	{false,false,false,false,false,false,false,false,false,false}
+};
 int nextzone[4][3] =
 {
 	{-1,-1,-1},
@@ -203,9 +224,12 @@ VOID MY_ALL_KEYDOWN_UPDATE(VOID);	//キーの入力状態を更新する関数
 VOID MY_SOUND_LOAD(SOUND *, const char *);
 VOID MY_IMAGE_LOAD(IMAGE *, int, int, const char *);
 
-VOID MOVE_BLOCK(IMAGE *, BLOCK);
-VOID PUT_BLOCK(VOID);
-VOID INIT_STAGE(VOID);
+VOID SET_BLOCK_MOVE(IMAGE *, BLOCK);
+//VOID SET_BLOCK_PUT(IMAGE *, BLOCK);
+//VOID PUT_BLOCK(VOID);
+VOID STAGE_FLAG_CHANGE_TRUE(BLOCK);
+VOID INIT_STAGE_ALL(VOID);
+VOID INIT_STAGE_ONLY_MOVE(VOID);
 bool HOLD(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
@@ -404,13 +428,13 @@ VOID MY_IMAGE_LOAD(IMAGE *i, int x, int y, const char *path)
 	return;
 }
 
-VOID MOVE_BLOCK(IMAGE *i, BLOCK c)
+VOID SET_BLOCK_MOVE(IMAGE *i, BLOCK c)
 {
 	for (int y = 0; y < 18; y++)
 	{
 		for (int x = 0; x < 10; x++)
 		{
-			if (stage_move[y][x] == c || stage_put[y][x] == c)
+			if (stage_move[y][x] == c)
 			{
 				DrawGraph(x * 30 + 130, y * 30 + 75, i->handle, TRUE);
 			}
@@ -419,7 +443,22 @@ VOID MOVE_BLOCK(IMAGE *i, BLOCK c)
 	return;
 }
 
-VOID PUT_BLOCK(BLOCK c)
+//VOID SET_BLOCK_PUT(IMAGE *i, BLOCK c)
+//{
+//	for (int y = 0; y < 18; y++)
+//	{
+//		for (int x = 0; x < 10; x++)
+//		{
+//			if (stage_put[y][x] == c)
+//			{
+//				DrawGraph(x * 30 + 130, y * 30 + 75, i->handle, TRUE);
+//			}
+//		}
+//	}
+//	return;
+//}
+
+VOID STAGE_FLAG_CHANGE_TRUE(BLOCK c)
 {
 	for (int y = 0; y < 18; y++)
 	{
@@ -427,21 +466,55 @@ VOID PUT_BLOCK(BLOCK c)
 		{
 			if (stage_move[y][x] == c)
 			{
-				stage_put[y][x] == c;
+				stage_put_flag[y][x] = true;
 			}
 		}
 	}
+	return;
 }
 
-VOID INIT_STAGE(VOID)
+//VOID PUT_BLOCK(BLOCK c)
+//{
+//	for (int y = 0; y < 18; y++)
+//	{
+//		for (int x = 0; x < 10; x++)
+//		{
+//			if (stage_move[y][x] == c && stage_put_flag[y][x] == true)
+//			{
+//				stage_put[y][x] == c;
+//			}
+//		}
+//	}
+//	return;
+//}
+
+VOID INIT_STAGE_ALL(VOID)
 {
 	for (int y = 0; y < 18; y++)
 	{
 		for (int x = 0; x < 10; x++)
 		{
 			stage_move[y][x] = -1;
+			stage_put[y][x] = -1;
+			stage_put_flag[y][x] = false;
 		}
 	}
+	return;
+}
+
+VOID INIT_STAGE_ONLY_MOVE(VOID)
+{
+	for (int y = 0; y < 18; y++)
+	{
+		for (int x = 0; x < 10; x++)
+		{
+			if (stage_move[y][x] != -1 && stage_put_flag[y][x] == false)
+			{
+				stage_move[y][x] = -1;
+			}			
+		}
+	}
+	return;
 }
 
 bool HOLD(VOID)
@@ -450,7 +523,7 @@ bool HOLD(VOID)
 	{
 		if (firsthold_flag == true)
 		{
-			INIT_STAGE();
+			INIT_STAGE_ONLY_MOVE();
 			holdmino = mino_rand;
 			mino_rand = nextmino_rand;
 			nextmino_rand = GetRand(MINO_KIND - 1);
@@ -461,7 +534,7 @@ bool HOLD(VOID)
 		}
 		else
 		{
-			INIT_STAGE();
+			INIT_STAGE_ONLY_MOVE();
 			hold_taihi = holdmino;
 			holdmino = mino_rand;
 			mino_rand = hold_taihi;
@@ -482,7 +555,7 @@ VOID MY_GAME_TITLE(VOID)
 
 	DrawGraph(bg_title.x, bg_title.y, bg_title.handle, TRUE);
 
-	INIT_STAGE();
+	INIT_STAGE_ALL();
 
 	syoki_flag = 0;
 
@@ -619,14 +692,31 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			//PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
 		}
 
-		MOVE_BLOCK(&block_red, RED);
-		MOVE_BLOCK(&block_orange, ORANGE);
-		MOVE_BLOCK(&block_yellow, YELLOW);
-		MOVE_BLOCK(&block_green, GREEN);
-		MOVE_BLOCK(&block_rightblue, RIGHTBLUE);
-		MOVE_BLOCK(&block_blue, BLUE);
-		MOVE_BLOCK(&block_purple, PURPLE);
+		/*PUT_BLOCK(RED);
+		PUT_BLOCK(ORANGE);
+		PUT_BLOCK(YELLOW);
+		PUT_BLOCK(GREEN);
+		PUT_BLOCK(RIGHTBLUE);
+		PUT_BLOCK(BLUE);
+		PUT_BLOCK(PURPLE);
 
+		SET_BLOCK_PUT(&block_red, RED);
+		SET_BLOCK_PUT(&block_orange, ORANGE);
+		SET_BLOCK_PUT(&block_yellow, YELLOW);
+		SET_BLOCK_PUT(&block_green, GREEN);
+		SET_BLOCK_PUT(&block_rightblue, RIGHTBLUE);
+		SET_BLOCK_PUT(&block_blue, BLUE);
+		SET_BLOCK_PUT(&block_purple, PURPLE);*/
+
+		SET_BLOCK_MOVE(&block_red, RED);
+		SET_BLOCK_MOVE(&block_orange, ORANGE);
+		SET_BLOCK_MOVE(&block_yellow, YELLOW);
+		SET_BLOCK_MOVE(&block_green, GREEN);
+		SET_BLOCK_MOVE(&block_rightblue, RIGHTBLUE);
+		SET_BLOCK_MOVE(&block_blue, BLUE);
+		SET_BLOCK_MOVE(&block_purple, PURPLE);
+
+		
 		//操作するミノ
 		switch (mino_rand)
 		{
@@ -672,6 +762,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(RED);
 				holdfinish_flag = false;
 				flg_r = true;
 				cnt_r = 0;
@@ -723,6 +814,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(ORANGE);
 				holdfinish_flag = false;
 				flg_o = true;
 				cnt_o = 0;
@@ -773,6 +865,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(YELLOW);
 				holdfinish_flag = false;
 				flg_y = true;
 				cnt_y = 0;
@@ -823,6 +916,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(GREEN);
 				holdfinish_flag = false;
 				flg_g = true;
 				cnt_g = 0;
@@ -873,6 +967,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 				holdfinish_flag = false;
 				flg_rb = true;
 				cnt_rb = 0;
@@ -922,6 +1017,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(BLUE);
 				holdfinish_flag = false;
 				flg_b = true;
 				cnt_b = 0;
@@ -972,6 +1068,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
+				STAGE_FLAG_CHANGE_TRUE(PURPLE);
 				holdfinish_flag = false;
 				flg_p = true;
 				cnt_p = 0;
@@ -1250,6 +1347,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	}
 	else if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
+		INIT_STAGE_ALL();	//確認画面から戻ってきたときにミノのコピーがその地点に残ってしまうバグの対策(急場しのぎ)
 		GameSceneNow = (int)GAME_SCENE_CHECK_ENDLESS;
 	}
 
