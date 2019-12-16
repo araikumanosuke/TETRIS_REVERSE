@@ -716,7 +716,6 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 		SET_BLOCK_MOVE(&block_blue, BLUE);
 		SET_BLOCK_MOVE(&block_purple, PURPLE);
 
-		
 		//ëÄçÏÇ∑ÇÈÉ~Ém
 		switch (mino_rand)
 		{
@@ -730,6 +729,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_r - tmp_r > cnt && cnt_r - tmp_r <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -743,22 +743,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}						
 					}
 
-					if (cnt_r - tmp_r > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 1)
 					{
-						stage_move[y_move - 1][4] = -1;
-						stage_move[y_move - 1][5] = -1;
-						stage_move[y_move][5] = -1;
-						stage_move[y_move][6] = -1;
+						--x_move;
 					}
 
-					stage_move[y_move][4] = RED;
-					stage_move[y_move][5] = RED;
-					stage_move[y_move + 1][5] = RED;
-					stage_move[y_move + 1][6] = RED;
-
-					if (cnt_r - tmp_r >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 6)
 					{
-						if (stage_put_flag[y_move + 2][5] == true || stage_put_flag[y_move + 2][6] == true)
+						++x_move;
+					}
+
+					if (cnt_r - tmp_r > 1000)
+					{
+						stage_move[y_move - 1][x_move - 1] = -1;
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move][x_move] = -1;
+						stage_move[y_move][x_move + 1] = -1;
+					}
+
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move + 2] = -1;
+
+					stage_move[y_move][x_move - 2] = -1;
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+
+					stage_move[y_move][x_move - 1] = RED;
+					stage_move[y_move][x_move] = RED;
+					stage_move[y_move + 1][x_move] = RED;
+					stage_move[y_move + 1][x_move + 1] = RED;
+
+					if (cnt_r - tmp_r >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -797,6 +817,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_o - tmp_o > cnt && cnt_o - tmp_o <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -810,22 +831,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}						
 					}
 
-					if (cnt_o - tmp_o > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
-						stage_move[y_move - 1][6] = -1;
-						stage_move[y_move][4] = -1;
-						stage_move[y_move][5] = -1;
-						stage_move[y_move][6] = -1;
+						--x_move;
 					}
 
-					stage_move[y_move][6] = ORANGE;
-					stage_move[y_move + 1][4] = ORANGE;
-					stage_move[y_move + 1][5] = ORANGE;
-					stage_move[y_move + 1][6] = ORANGE;
-
-					if (cnt_o - tmp_o >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
-						if (stage_put_flag[y_move + 2][4] == true || stage_put_flag[y_move + 2][5] == true || stage_put_flag[y_move + 2][6] == true)
+						++x_move;
+					}
+
+					if (cnt_o - tmp_o > 1000)
+					{
+						stage_move[y_move - 1][x_move + 1] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+						stage_move[y_move][x_move + 1] = -1;
+					}
+
+					stage_move[y_move][x_move + 2] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move + 2] = -1;
+
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move + 1][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+
+					stage_move[y_move][x_move + 1] = ORANGE;
+					stage_move[y_move + 1][x_move - 1] = ORANGE;
+					stage_move[y_move + 1][x_move] = ORANGE;
+					stage_move[y_move + 1][x_move + 1] = ORANGE;
+
+					if (cnt_o - tmp_o >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -863,6 +904,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_ye - tmp_ye > cnt && cnt_ye - tmp_ye <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -876,22 +918,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}						
 					}
 
-					if (cnt_ye - tmp_ye > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
-						stage_move[y_move - 1][4] = -1;
-						stage_move[y_move - 1][5] = -1;
-						stage_move[y_move][4] = -1;
-						stage_move[y_move][5] = -1;
+						--x_move;
 					}
 
-					stage_move[y_move][4] = YELLOW;
-					stage_move[y_move][5] = YELLOW;
-					stage_move[y_move + 1][4] = YELLOW;
-					stage_move[y_move + 1][5] = YELLOW;
-
-					if (cnt_ye - tmp_ye >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8)
 					{
-						if (stage_put_flag[y_move + 2][4] == true || stage_put_flag[y_move + 2][5] == true)
+						++x_move;
+					}
+
+					if (cnt_ye - tmp_ye > 1000)
+					{
+						stage_move[y_move - 1][x_move - 1] = -1;
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+					}
+
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+
+					stage_move[y_move][x_move - 2] = -1;
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+
+					stage_move[y_move][x_move - 1] = YELLOW;
+					stage_move[y_move][x_move] = YELLOW;
+					stage_move[y_move + 1][x_move - 1] = YELLOW;
+					stage_move[y_move + 1][x_move] = YELLOW;
+
+					if (cnt_ye - tmp_ye >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -929,6 +991,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_g - tmp_g > cnt && cnt_g - tmp_g <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -942,22 +1005,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}					
 					}
 
-					if (cnt_g - tmp_g > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
-						stage_move[y_move - 1][5] = -1;
-						stage_move[y_move - 1][6] = -1;
-						stage_move[y_move][4] = -1;
-						stage_move[y_move][5] = -1;
+						--x_move;
 					}
 
-					stage_move[y_move][5] = GREEN;
-					stage_move[y_move][6] = GREEN;
-					stage_move[y_move + 1][4] = GREEN;
-					stage_move[y_move + 1][5] = GREEN;
-
-					if (cnt_g - tmp_g >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
-						if (stage_put_flag[y_move + 2][4] == true || stage_put_flag[y_move + 2][5] == true)
+						++x_move;
+					}
+
+					if (cnt_g - tmp_g > 1000)
+					{
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move - 1][x_move + 1] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+					}
+
+					stage_move[y_move][x_move + 1] = -1;
+					stage_move[y_move][x_move + 2] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move + 1][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+
+					stage_move[y_move][x_move] = GREEN;
+					stage_move[y_move][x_move + 1] = GREEN;
+					stage_move[y_move + 1][x_move - 1] = GREEN;
+					stage_move[y_move + 1][x_move] = GREEN;
+
+					if (cnt_g - tmp_g >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 1][x_move + 1] == true || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -995,6 +1078,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 18 && cnt < 18000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_rb - tmp_rb > cnt && cnt_rb - tmp_rb <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -1008,22 +1092,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}					
 					}
 
-					if (cnt_rb - tmp_rb > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 3)
 					{
-						stage_move[y_move - 1][3] = -1;
-						stage_move[y_move - 1][4] = -1;
-						stage_move[y_move - 1][5] = -1;
-						stage_move[y_move - 1][6] = -1;
+						--x_move;
 					}
 
-					stage_move[y_move][3] = RIGHTBLUE;
-					stage_move[y_move][4] = RIGHTBLUE;
-					stage_move[y_move][5] = RIGHTBLUE;
-					stage_move[y_move][6] = RIGHTBLUE;
-
-					if (cnt_rb - tmp_rb >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
-						if (stage_put_flag[y_move + 1][3] == true || stage_put_flag[y_move + 1][4] == true || stage_put_flag[y_move + 1][5] == true || stage_put_flag[y_move + 1][6] == true)
+						++x_move;
+					}
+
+					if (cnt_rb - tmp_rb > 1000)
+					{
+						stage_move[y_move - 1][x_move - 2] = -1;
+						stage_move[y_move - 1][x_move - 1] = -1;
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move - 1][x_move + 1] = -1;
+					}
+
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move][x_move + 1] = -1;
+					stage_move[y_move][x_move + 2] = -1;
+
+					stage_move[y_move][x_move - 3] = -1;
+					stage_move[y_move][x_move - 2] = -1;
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move][x_move] = -1;
+
+					stage_move[y_move][x_move - 2] = RIGHTBLUE;
+					stage_move[y_move][x_move - 1] = RIGHTBLUE;
+					stage_move[y_move][x_move] = RIGHTBLUE;
+					stage_move[y_move][x_move + 1] = RIGHTBLUE;
+
+					if (cnt_rb - tmp_rb >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 1][x_move - 2] == true || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true || stage_put_flag[y_move + 1][x_move + 1] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -1061,6 +1165,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_b - tmp_b > cnt && cnt_b - tmp_b <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -1074,22 +1179,43 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}						
 					}
 
-					if (cnt_b - tmp_b > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
-						stage_move[y_move - 1][4] = -1;
-						stage_move[y_move][4] = -1;
-						stage_move[y_move][5] = -1;
-						stage_move[y_move][6] = -1;
+						--x_move;
+						
 					}
 
-					stage_move[y_move][4] = BLUE;
-					stage_move[y_move + 1][4] = BLUE;
-					stage_move[y_move + 1][5] = BLUE;
-					stage_move[y_move + 1][6] = BLUE;
-
-					if (cnt_b - tmp_b >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
-						if (stage_put_flag[y_move + 2][4] == true || stage_put_flag[y_move + 2][5] == true || stage_put_flag[y_move + 2][6] == true)
+						++x_move;
+					}
+
+					if (cnt_b - tmp_b > 1000)
+					{
+						stage_move[y_move - 1][x_move - 1] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+						stage_move[y_move][x_move + 1] = -1;
+					}
+
+					stage_move[y_move][x_move] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move + 2] = -1;
+
+					stage_move[y_move][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+
+					stage_move[y_move][x_move - 1] = BLUE;
+					stage_move[y_move + 1][x_move - 1] = BLUE;
+					stage_move[y_move + 1][x_move] = BLUE;
+					stage_move[y_move + 1][x_move + 1] = BLUE;
+
+					if (cnt_b - tmp_b >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
@@ -1127,6 +1253,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
 			{
+				static int x_move = 5;
 				if (cnt_p - tmp_p > cnt && cnt_p - tmp_p <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -1140,22 +1267,42 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}	
 					}
 
-					if (cnt_p - tmp_p > 1000)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
-						stage_move[y_move - 1][5] = -1;
-						stage_move[y_move][4] = -1;
-						stage_move[y_move][5] = -1;
-						stage_move[y_move][6] = -1;
+						x_move--;
 					}
 
-					stage_move[y_move][5] = PURPLE;
-					stage_move[y_move + 1][4] = PURPLE;
-					stage_move[y_move + 1][5] = PURPLE;
-					stage_move[y_move + 1][6] = PURPLE;
-
-					if (cnt_p - tmp_p >= cnt + 990)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
-						if (stage_put_flag[y_move + 2][4] == true || stage_put_flag[y_move + 2][5] == true || stage_put_flag[y_move + 2][6] == true)
+						x_move++;
+					}
+
+					if (cnt_p - tmp_p > 1000)
+					{
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+						stage_move[y_move][x_move + 1] = -1;
+					}
+
+					stage_move[y_move][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+					stage_move[y_move + 1][x_move + 1] = -1;
+					stage_move[y_move + 1][x_move + 2] = -1;
+
+					stage_move[y_move][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move - 2] = -1;
+					stage_move[y_move + 1][x_move - 1] = -1;
+					stage_move[y_move + 1][x_move] = -1;
+
+					stage_move[y_move][x_move] = PURPLE;
+					stage_move[y_move + 1][x_move - 1] = PURPLE;
+					stage_move[y_move + 1][x_move] = PURPLE;
+					stage_move[y_move + 1][x_move + 1] = PURPLE;
+
+					if (cnt_p - tmp_p >= cnt + 980)
+					{
+						if (stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
