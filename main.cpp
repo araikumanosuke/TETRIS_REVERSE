@@ -1076,7 +1076,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							--x_move;
 						}
 
-						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 2] == -1)
+						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -1127,7 +1127,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							--x_move;
 						}
 
-						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 2] == -1)
+						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move] == -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -1325,6 +1325,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			{
 				tmp_g = cnt_g;
 				x_move = 5;
+				rotation_green = 0;
 				flg_g = false;
 			}
 
@@ -1343,66 +1344,154 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}					
 					}
 
-					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
+					if (AllKeyState[KEY_INPUT_Z] == 1 || AllKeyState[KEY_INPUT_C] == 1)
 					{
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move + 1] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move] = -1;
-						--x_move;
-						/*stage_move[y_move][x_move + 1] = -1;
-						stage_move[y_move][x_move + 2] = -1;
-						stage_move[y_move + 1][x_move] = -1;
-						stage_move[y_move + 1][x_move + 1] = -1;*/
-					}
-
-					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
-					{
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move + 1] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move] = -1;
-						++x_move;
-						/*stage_move[y_move][x_move - 1] = -1;
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move + 1][x_move - 2] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;*/
-					}
-
-					if (cnt_g - tmp_g > 1000)
-					{
-						if (cnt_g - tmp_g <= cnt + 20)
+						if (rotation_green == 0 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1)
 						{
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
+							rotation_green = 90;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+						}
+						else if (rotation_green == 90 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1)
+						{
+							if (x_move == 9)
+							{
+								stage_move[y_move - 1][x_move - 1] = -1;
+								stage_move[y_move + 1][x_move] = -1;
+								--x_move;
+							}
+							rotation_green = 0;
+							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 						}
 					}
 
-					stage_move[y_move][x_move] = GREEN;
-					stage_move[y_move][x_move + 1] = GREEN;
-					stage_move[y_move + 1][x_move - 1] = GREEN;
-					stage_move[y_move + 1][x_move] = GREEN;
-
-					if (cnt_g - tmp_g >= cnt + 980)
+					if (rotation_green == 0)
 					{
-						if (stage_put_flag[y_move + 1][x_move + 1] == true || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
+						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
-							mino_rand = nextmino_rand;
-							nextmino_rand = GetRand(MINO_KIND - 1);
-							STAGE_FLAG_CHANGE_TRUE(GREEN);
-							holdfinish_flag = false;
-							flg_g = true;
-							cnt_g = 0;
-							tmp_g = 0;
-							break;
-						}						
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--x_move;
+							/*stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move][x_move + 2] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;*/
+						}
+
+						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+						{
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							++x_move;
+							/*stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 2] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;*/
+						}
+
+						if (cnt_g - tmp_g > 1000)
+						{
+							if (cnt_g - tmp_g <= cnt + 20)
+							{
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move - 1][x_move + 1] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+								stage_move[y_move][x_move] = -1;
+							}
+						}
+
+						stage_move[y_move][x_move] = GREEN;
+						stage_move[y_move][x_move + 1] = GREEN;
+						stage_move[y_move + 1][x_move - 1] = GREEN;
+						stage_move[y_move + 1][x_move] = GREEN;
+
+						if (cnt_g - tmp_g >= cnt + 980)
+						{
+							if (y_move == 16 || stage_put_flag[y_move + 1][x_move + 1] == true || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
+							{
+								mino_rand = nextmino_rand;
+								nextmino_rand = GetRand(MINO_KIND - 1);
+								STAGE_FLAG_CHANGE_TRUE(GREEN);
+								holdfinish_flag = false;
+								flg_g = true;
+								cnt_g = 0;
+								tmp_g = 0;
+								break;
+							}
+						}
+					}
+					else if (rotation_green == 90)
+					{
+						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--x_move;
+							/*stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move][x_move + 2] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;*/
+						}
+
+						if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							++x_move;
+							/*stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 2] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;*/
+						}
+
+						if (cnt_g - tmp_g > 1000)
+						{
+							if (cnt_g - tmp_g <= cnt + 20)
+							{
+								stage_move[y_move - 2][x_move - 1] = -1;
+								stage_move[y_move - 1][x_move - 1] = -1;
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move][x_move] = -1;
+							}
+						}
+
+						stage_move[y_move - 1][x_move - 1] = GREEN;
+						stage_move[y_move][x_move - 1] = GREEN;
+						stage_move[y_move][x_move] = GREEN;
+						stage_move[y_move + 1][x_move] = GREEN;
+
+						if (cnt_g - tmp_g >= cnt + 980)
+						{
+							if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
+							{
+								mino_rand = nextmino_rand;
+								nextmino_rand = GetRand(MINO_KIND - 1);
+								STAGE_FLAG_CHANGE_TRUE(GREEN);
+								holdfinish_flag = false;
+								flg_g = true;
+								cnt_g = 0;
+								tmp_g = 0;
+								break;
+							}
+						}
 					}
 				}
 			}
 
-			if (cnt_g - tmp_g >= 17000)
+			/*if (cnt_g - tmp_g >= 17000)
 			{
 				mino_rand = nextmino_rand;
 				nextmino_rand = GetRand(MINO_KIND - 1);
@@ -1412,7 +1501,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				cnt_g = 0;
 				tmp_g = 0;
 				break;
-			}
+			}*/
 			break;
 
 		case RIGHTBLUE:
