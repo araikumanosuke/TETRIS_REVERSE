@@ -231,6 +231,7 @@ VOID STAGE_FLAG_CHANGE_TRUE(BLOCK);
 VOID INIT_STAGE_ALL(VOID);
 VOID INIT_STAGE_ONLY_MOVE(VOID);
 bool HOLD(VOID);
+VOID DELETE_MOVE_LINE(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
@@ -546,6 +547,113 @@ bool HOLD(VOID)
 
 	return false;
 }
+
+VOID DELETE_MOVE_LINE(VOID)
+{
+	int deletecount = 0;	//消去した列数
+
+	int y_tmp = 0;	//一度に消えた列のうち一番上の列番号を保存
+
+	//消去処理
+	for (int y = 0; y < 18; y++)
+	{
+		if (stage_put_flag[y][0] == true &&
+			stage_put_flag[y][1] == true &&
+			stage_put_flag[y][2] == true &&
+			stage_put_flag[y][3] == true &&
+			stage_put_flag[y][4] == true &&
+			stage_put_flag[y][5] == true &&
+			stage_put_flag[y][6] == true &&
+			stage_put_flag[y][7] == true &&
+			stage_put_flag[y][8] == true &&
+			stage_put_flag[y][9] == true)
+		{
+			for (int x = 0; x < 10; x++)
+			{
+				stage_move[y][x] = -1;
+				stage_put_flag[y][x] = false;
+			}
+
+			if (deletecount == 0)
+			{
+				y_tmp = y;	//列番号を保存
+			}
+
+			deletecount++;
+		}
+	}
+
+	//消去した列の上の列のブロックを消去した列数分下へ移動
+	for (int y = y_tmp; y > -1; y--)
+	{
+		for (int x = 0; x < 10; x++)
+		{
+			if (stage_move[y][x] != -1 && stage_put_flag[y][x] == true)
+			{
+				switch (stage_move[y][x])
+				{
+				case RED:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = RED;
+					break;
+
+				case ORANGE:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = ORANGE;
+					break;
+
+				case YELLOW:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = YELLOW;
+					break;
+
+				case GREEN:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = GREEN;
+					break;
+
+				case RIGHTBLUE:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = RIGHTBLUE;
+					break;
+
+				case BLUE:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = BLUE;
+					break;
+
+				case PURPLE:
+					stage_move[y][x] = -1;
+					stage_put_flag[y][x] = false;
+
+					stage_put_flag[y + deletecount][x] = true;
+					stage_move[y + deletecount][x] = PURPLE;
+					break;
+				}
+			}
+		}
+	}
+	return;
+}
+
 VOID MY_GAME_TITLE(VOID)
 {
 	if (CheckSoundMem(bgm_title_etc.handle) == 0)
@@ -740,7 +848,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			}
 
 			for (int y_move = 0, cnt = 0; y_move < 17 && cnt < 17000; y_move++, cnt += 1000)
-			{
+			{	
 				if (cnt_r - tmp_r > cnt && cnt_r - tmp_r <= cnt + 1000)
 				{
 					if (AllKeyState[KEY_INPUT_SPACE] != 0)
@@ -783,14 +891,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_red == 0)	//横向き
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -837,20 +945,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_r = true;
 								cnt_r = 0;
 								tmp_r = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_red == 90)	//縦向き
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{	
-							stage_move[y_move - 2][x_move] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1)
 						{
@@ -899,6 +1008,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_r = true;
 								cnt_r = 0;
 								tmp_r = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
@@ -1034,14 +1144,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_orange == 0)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move + 1] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -1088,20 +1198,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_o = true;
 								cnt_o = 0;
 								tmp_o = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_orange == 90)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{						
-							stage_move[y_move - 2][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -1148,20 +1259,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_o = true;
 								cnt_o = 0;
 								tmp_o = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_orange == 180)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -1208,20 +1320,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_o = true;
 								cnt_o = 0;
 								tmp_o = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_orange == 270)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move - 1] = -1;
-							stage_move[y_move - 2][x_move] = -1;
+							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -1268,6 +1381,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_o = true;
 								cnt_o = 0;
 								tmp_o = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
@@ -1301,15 +1415,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}						
 					}
 
-					if (AllKeyState[KEY_INPUT_DOWN] == 1)
+					/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 					{					
-						stage_move[y_move - 1][x_move - 1] = -1;
-						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
+						stage_move[y_move + 1][x_move - 1] = -1;
+						stage_move[y_move + 1][x_move] = -1;
 						++y_move;
 					}
-
+*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 					{
 						stage_move[y_move][x_move - 1] = -1;
@@ -1363,6 +1477,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							flg_ye = true;
 							cnt_ye = 0;
 							tmp_ye = 0;
+							DELETE_MOVE_LINE();
 							break;
 						}						
 					}
@@ -1435,14 +1550,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_green == 0)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
-							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -1497,20 +1612,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_g = true;
 								cnt_g = 0;
 								tmp_g = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_green == 90)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -1565,6 +1681,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_g = true;
 								cnt_g = 0;
 								tmp_g = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
@@ -1659,14 +1776,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_rightblue == 0)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 2] = -1;
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 2] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 3 && stage_move[y_move][x_move - 3] == -1)
 						{
@@ -1721,20 +1838,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_rb = true;
 								cnt_rb = 0;
 								tmp_rb = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_rightblue == 90)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 3][x_move] = -1;
 							stage_move[y_move - 2][x_move] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 1 && stage_move[y_move - 2][x_move - 1] == -1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -1789,6 +1907,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_rb = true;
 								cnt_rb = 0;
 								tmp_rb = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
@@ -1931,14 +2050,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_blue == 0)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -1993,20 +2112,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_b = true;
 								cnt_b = 0;
 								tmp_b = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_blue == 90)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move - 1] = -1;
-							stage_move[y_move - 2][x_move] = -1;
 							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -2061,20 +2181,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_b = true;
 								cnt_b = 0;
 								tmp_b = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_blue == 180)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1)
 						{
@@ -2129,20 +2250,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_b = true;
 								cnt_b = 0;
 								tmp_b = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_blue == 270)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -2197,6 +2319,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_b = true;
 								cnt_b = 0;
 								tmp_b = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
@@ -2339,14 +2462,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 					if (rotation_purple == 0)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 1][x_move + 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -2401,20 +2524,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_p = true;
 								cnt_p = 0;
 								tmp_p = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_purple == 90)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 						{
@@ -2469,20 +2593,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_p = true;
 								cnt_p = 0;
 								tmp_p = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_purple == 180)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -2537,20 +2662,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_p = true;
 								cnt_p = 0;
 								tmp_p = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
 					}
 					else if (rotation_purple == 270)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] == 1)
+						/*if (AllKeyState[KEY_INPUT_DOWN] != 0)
 						{
-							stage_move[y_move - 2][x_move] = -1;
-							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							++y_move;
-						}
+						}*/
 
 						if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 						{
@@ -2605,6 +2731,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								flg_p = true;
 								cnt_p = 0;
 								tmp_p = 0;
+								DELETE_MOVE_LINE();
 								break;
 							}
 						}
