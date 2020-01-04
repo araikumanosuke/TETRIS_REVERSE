@@ -277,7 +277,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ready_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 60, -1, DX_FONTTYPE_ANTIALIASING);
 	Go_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 120, -1, DX_FONTTYPE_ANTIALIASING);
-	score_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 40, -1, DX_FONTTYPE_ANTIALIASING);
+	score_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 39, -1, DX_FONTTYPE_ANTIALIASING);
 	line_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 48, -1, DX_FONTTYPE_ANTIALIASING);
 
 	ChangeFont("UD デジタル 教科書体 NK-B");
@@ -651,6 +651,34 @@ VOID DELETE_MOVE_LINE(VOID)
 			}
 		}
 	}
+
+	//消去ライン数&反転までのライン数反映
+	deleteline += deletecount;
+	reverseline -= deletecount;
+	if (reverseline <= 0)
+	{
+		reverseline += 40;
+	}
+
+	//スコア加算
+	switch (deletecount)
+	{
+	case 0:
+		break;
+	case 1: 
+		score += 100;
+		break;
+	case 2:
+		score += 300;
+		break;
+	case 3:
+		score += 600;
+		break;
+	case 4:
+		score += 1000;
+		break;
+	}
+
 	return;
 }
 
@@ -750,9 +778,43 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	/*初期処理*/
 	DrawGraph(bg_play_endless.x, bg_play_endless.y, bg_play_endless.handle, TRUE);
 
-	DrawFormatStringToHandle(37, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
-	DrawFormatStringToHandle(476, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
-	DrawFormatStringToHandle(395, 25, GetColor(255, 255, 255), score_fonthandle, "%d", score);
+	//反転までの残りライン数
+	if (reverseline >= 10)	//２ケタ
+	{
+		DrawFormatStringToHandle(37, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
+	}
+	else if (reverseline < 10)	//１ケタ
+	{
+		DrawFormatStringToHandle(55, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
+	}
+
+	//消去したライン
+	if (deleteline >= 999)	//カンスト
+	{
+		DrawFormatStringToHandle(440, 320, GetColor(0, 0, 255), line_fonthandle, "%d", 999);
+	}
+	else if(deleteline >= 100)	//３ケタ
+	{
+		DrawFormatStringToHandle(440, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
+	}
+	else if (deleteline >= 10)	//２ケタ
+	{
+		DrawFormatStringToHandle(458, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
+	}
+	else if (deleteline < 10)	//１ケタ
+	{
+		DrawFormatStringToHandle(476, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
+	}
+
+	//スコア
+	if (score >= 99999999)	//カンスト
+	{
+		DrawFormatStringToHandle(210, 25, GetColor(255, 255, 255), score_fonthandle, "%08d", 99999999);
+	}
+	else
+	{
+		DrawFormatStringToHandle(210, 25, GetColor(255, 255, 255), score_fonthandle, "%08d", score);
+	}
 
 	static int syoki_temp;
 
