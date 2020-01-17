@@ -88,7 +88,6 @@ int syoki_flag;			//プレイ画面の初期処理で使う
 //bool ground_flag;		//接地したか
 bool firsthold_flag;	//最初のHOLDかどうか
 bool holdfinish_flag;	//接地するまでにHOLDを2回以上使われないためのフラグ
-int hold_taihi;			//HOLDミノ入れ替え処理で使用
 
 int mino_rand;
 int nextmino_rand;
@@ -204,6 +203,7 @@ VOID INIT_STAGE_ALL(VOID);
 VOID INIT_STAGE_ONLY_MOVE(VOID);
 bool HOLD(VOID);
 VOID DELETE_MOVE_LINE(VOID);
+VOID REVERSE_BLOCK(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
@@ -461,6 +461,7 @@ VOID INIT_STAGE_ONLY_MOVE(VOID)
 
 bool HOLD(VOID)
 {	
+	int hold_taihi = -1;			//HOLDミノ入れ替え処理で使用
 	if (holdfinish_flag == false)
 	{
 		if (firsthold_flag == true)
@@ -487,6 +488,43 @@ bool HOLD(VOID)
 	}
 
 	return false;
+}
+
+VOID REVERSE_BLOCK(VOID)
+{
+	int taihi_up;
+	int taihi_down;
+
+	for (int i = 0; i < 9; i++)
+	{
+		for (int x = 0; x < 10; x++)
+		{
+			taihi_up = stage_move[i][x];
+			taihi_down = stage_move[17 - i][x];
+
+			stage_move[i][x] = taihi_down;
+			stage_move[17 - i][x] = taihi_up;
+
+			if (stage_move[i][x] == -1)
+			{
+				stage_put_flag[i][x] = false;
+			}
+			else
+			{
+				stage_put_flag[i][x] = true;
+			}
+
+			if (stage_move[17 - i][x] == -1)
+			{
+				stage_put_flag[17 - i][x] = false;
+			}
+			else
+			{
+				stage_put_flag[i][x] = true;
+			}
+		}
+	}
+	return;
 }
 
 VOID DELETE_MOVE_LINE(VOID)
@@ -705,6 +743,7 @@ VOID DELETE_MOVE_LINE(VOID)
 	//消去ライン数&反転までのライン数反映
 	deleteline += deletecount;
 	reverseline -= deletecount;
+
 	if (reverseline <= 0)
 	{
 		reverseline += 40;
@@ -716,6 +755,8 @@ VOID DELETE_MOVE_LINE(VOID)
 		{
 			reverse_flag = true;
 		}
+
+		REVERSE_BLOCK();
 	}
 
 	//スコア加算
@@ -927,12 +968,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					x_move = 5;
-					y_move = 0;
-					rotation = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						x_move = 5;
+						y_move = 0;
+						rotation = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -942,8 +992,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -996,8 +1046,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RED);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1067,8 +1117,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RED);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1126,12 +1176,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					x_move = 5;
-					y_move = 17;
-					rotation = 0;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						x_move = 4;
+						y_move = 17;
+						rotation = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -1141,8 +1200,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -1165,7 +1224,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -1195,8 +1254,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RED);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1266,8 +1325,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RED);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1329,12 +1388,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -1344,8 +1412,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -1472,8 +1540,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1545,8 +1613,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1618,8 +1686,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1691,8 +1759,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1750,12 +1818,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					x_move = 5;
-					y_move = 17;
-					rotation = 180;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						x_move = 4;
+						y_move = 17;
+						rotation = 180;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -1765,8 +1842,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -1788,7 +1865,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						//右端で回すときに左にはみ出さないための対策のif文
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
@@ -1812,7 +1889,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -1840,7 +1917,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						//左にはみ出さないための対策のif文
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
@@ -1864,6 +1941,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -1895,8 +1973,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -1968,8 +2046,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2041,8 +2119,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2114,8 +2192,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2177,12 +2255,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -2192,8 +2279,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -2217,8 +2304,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						STAGE_FLAG_CHANGE_TRUE(YELLOW);
 						holdfinish_flag = false;
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2274,12 +2361,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 17;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 17;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -2289,8 +2385,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -2314,8 +2410,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						STAGE_FLAG_CHANGE_TRUE(YELLOW);
 						holdfinish_flag = false;
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2345,7 +2441,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*上昇処理(ソフトドロップここまで)*/
 
 				/*左移動処理*/
-				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
+				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
 				{
 					stage_move[y_move - 1][x_move - 1] = -1;
 					stage_move[y_move - 1][x_move] = -1;
@@ -2356,7 +2452,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*左移動処理ここまで*/
 
 				/*右移動処理*/
-				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1)
 				{
 					stage_move[y_move - 1][x_move - 1] = -1;
 					stage_move[y_move - 1][x_move] = -1;
@@ -2375,12 +2471,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -2389,9 +2494,9 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (HOLD())
 					{
-						firsthold_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -2445,8 +2550,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2517,8 +2622,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2575,12 +2680,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 17;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 4;
+						y_move = 17;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -2590,8 +2704,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -2612,7 +2726,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
@@ -2645,8 +2759,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2717,8 +2831,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2779,12 +2893,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -2794,8 +2917,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -2870,8 +2993,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -2942,8 +3065,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3000,12 +3123,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 17;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 4;
+						y_move = 17;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -3015,8 +3147,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -3025,20 +3157,25 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*回転処理(Iミノは回転のパターンが２通りのため左右を分けずに書く)*/
 				if (AllKeyState[KEY_INPUT_Z] == 1 || AllKeyState[KEY_INPUT_C] == 1)
 				{
-					if (rotation == 0 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 2][x_move] == -1)
+					if (rotation == 0)
 					{
-						if (y_move == 0)
+						if (y_move == 0 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 2] == -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
 							stage_move[y_move][x_move + 2] = -1;
 							y_move++;
 						}
-						rotation = 90;
-						stage_move[y_move][x_move - 1] = -1;
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move + 1] = -1;
-						stage_move[y_move][x_move + 2] = -1;
+
+						if (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 2][x_move] == -1)
+						{
+							rotation = 90;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move][x_move + 2] = -1;
+						}
 					}
 					else if (rotation == 90 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1)
 					{
@@ -3091,8 +3228,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3161,8 +3298,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3223,12 +3360,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -3238,8 +3384,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -3364,8 +3510,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3436,8 +3582,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3508,8 +3654,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3580,8 +3726,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -3638,12 +3784,21 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 180;
-					x_move = 5;
-					y_move = 17;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 180;
+						x_move = 4;
+						y_move = 17;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -3653,8 +3808,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -3675,7 +3830,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
 						rotation = 180;
@@ -3697,7 +3852,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -3724,7 +3879,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move + 1][x_move - 1] = -1;
 							--x_move;
 						}
@@ -3747,7 +3902,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -3823,10 +3978,10 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理*/
 					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 2] == -1)
 					{
+						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move] = -1;
-						stage_move[y_move + 1][x_move + 1] = -1;
+						stage_move[y_move][x_move] = -1;
+						stage_move[y_move][x_move + 1] = -1;
 						++x_move;
 					}
 					/*右移動処理ここまで*/
@@ -4058,12 +4213,21 @@ y_move;
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 0;
-					x_move = 5;
-					y_move = 0;
-					first_flag = false;
+					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 0;
+						x_move = 5;
+						y_move = 0;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -4073,8 +4237,8 @@ y_move;
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -4199,8 +4363,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4271,8 +4435,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4343,8 +4507,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4415,8 +4579,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4473,12 +4637,21 @@ y_move;
 				/*初期化処理*/
 				if (first_flag == true)
 				{
-					tmp = timer + 1000;
-					drop_tmp = timer + 100;
-					rotation = 180;
-					x_move = 5;
-					y_move = 17;
-					first_flag = false;
+					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+					{
+						//StopSoundMem(bgm_play.handle);
+						GameSceneNow = (int)GAME_SCENE_END_OVER;
+						return;
+					}
+					else
+					{
+						tmp = timer + 1000;
+						drop_tmp = timer + 100;
+						rotation = 180;
+						x_move = 4;
+						y_move = 17;
+						first_flag = false;
+					}
 				}
 				/*初期化処理ここまで*/
 
@@ -4488,8 +4661,8 @@ y_move;
 					if (HOLD())
 					{
 						first_flag = true;
-						tmp = 0;
-						drop_tmp = 0;
+						/*tmp = 0;
+						drop_tmp = 0;*/
 						break;
 					}
 				}
@@ -4510,7 +4683,7 @@ y_move;
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
@@ -4532,8 +4705,7 @@ y_move;
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
-							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -4560,7 +4732,8 @@ y_move;
 					{
 						if (x_move == 9)
 						{
-							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 							--x_move;
 						}
 						rotation = 180;
@@ -4582,7 +4755,7 @@ y_move;
 						if (x_move == 9)
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
 							--x_move;
 						}
 						rotation = 0;
@@ -4614,8 +4787,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4638,7 +4811,7 @@ y_move;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
-							y_move;
+							--y_move;
 						}
 						drop_tmp += 100;
 					}
@@ -4686,8 +4859,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4758,8 +4931,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4830,8 +5003,8 @@ y_move;
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
 							holdfinish_flag = false;
 							first_flag = true;
-							tmp = 0;
-							drop_tmp = 0;
+							/*tmp = 0;
+							drop_tmp = 0;*/
 							DELETE_MOVE_LINE();
 							break;
 						}
@@ -4883,6 +5056,7 @@ y_move;
 					/*右移動処理ここまで*/
 				}
 			}
+			
 			break;
 		}
 
@@ -5148,27 +5322,26 @@ y_move;
 
 	}
 
-	/*ゲームオーバー処理*/
-	if (reverse_flag == false)
-	{
-		if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
-		{
-			//StopSoundMem(bgm_play.handle);
-			GameSceneNow = (int)GAME_SCENE_END_OVER;
-			return;
-		}
-	}
-	else if (reverse_flag == true)
-	{
-		if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
-		{
-			//StopSoundMem(bgm_play.handle);
-			GameSceneNow = (int)GAME_SCENE_END_OVER;
-			return;
-		}
-	}
-	/*ゲームオーバー処理ここまで*/
-
+	///*ゲームオーバー処理*/
+	//if (reverse_flag == false)
+	//{
+	//	if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
+	//	{
+	//		//StopSoundMem(bgm_play.handle);
+	//		GameSceneNow = (int)GAME_SCENE_END_OVER;
+	//		return;
+	//	}
+	//}
+	//else if (reverse_flag == true)
+	//{
+	//	if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
+	//	{
+	//		//StopSoundMem(bgm_play.handle);
+	//		GameSceneNow = (int)GAME_SCENE_END_OVER;
+	//		return;
+	//	}
+	//}
+	///*ゲームオーバー処理ここまで*/
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
