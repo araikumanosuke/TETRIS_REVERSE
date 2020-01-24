@@ -809,7 +809,7 @@ VOID MY_GAME_TITLE(VOID)
 	nextmino_rand = -1;
 	holdmino = -1;
 
-	reverse_flag = true;
+	reverse_flag = false;
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
@@ -1033,20 +1033,32 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						stage_move[y_move + 1][x_move] = -1;
 						stage_move[y_move + 1][x_move + 1] = -1;
 					}
-					else if (rotation == 90 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+					else if (rotation == 90)
 					{
 						//90度回っている状態で右端で回そうとすると左端にはみ出るため、1つ左へずらしてから回す(この時一部のブロックが変に残るためそれを消す)
 						if (x_move == 9)
 						{
+							//移動先で回せるかどうか
+							if (stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1)
+							{
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move][x_move] = -1;
+								--x_move;
+								rotation = 0;
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
+						}
+						else if(stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+						{
+							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
-							--x_move;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
 						}
-						rotation = 0;
-						stage_move[y_move - 1][x_move] = -1;
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;
 					}
 				}
 				/*回転処理ここまで*/
