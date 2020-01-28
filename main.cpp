@@ -73,6 +73,12 @@ struct IMAGE {
 	int height;
 };
 
+struct TIME {
+	int min;	//分
+	int sec;	//秒
+	int m_sec;	//ミリ秒
+};
+
 BOOL IsWM_CREATE = FALSE;	//WM_CREATEが正常に動作したか判断する
 
 int StartTimeFps;					//測定開始時刻
@@ -99,6 +105,26 @@ int reverseline;
 int clearline;
 int score;
 
+/*ランキングで使う変数*/
+static int score_No1 = 0;
+static int score_No2 = 0;
+static int score_No3 = 0;
+static int score_No4 = 0;
+static int score_No5 = 0;
+
+static int deleteline_No1 = 0;
+static int deleteline_No2 = 0;
+static int deleteline_No3 = 0;
+static int deleteline_No4 = 0;
+static int deleteline_No5 = 0;
+
+static TIME No1 = { 0,0,0 };
+static TIME No2 = { 0,0,0 };
+static TIME No3 = { 0,0,0 };
+static TIME No4 = { 0,0,0 };
+static TIME No5 = { 0,0,0 };
+/*ランキングで使う変数ここまで*/
+
 bool reverse_flag;
 
 bool first_flag;
@@ -107,6 +133,7 @@ int ready_fonthandle;
 int Go_fonthandle;
 int line_fonthandle;
 int score_fonthandle;
+int rank_fonthandle;
 
 int stage_move[18][10] =
 {
@@ -251,6 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Go_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 120, -1, DX_FONTTYPE_ANTIALIASING);
 	score_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 39, -1, DX_FONTTYPE_ANTIALIASING);
 	line_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B", 48, -1, DX_FONTTYPE_ANTIALIASING);
+	rank_fonthandle = CreateFontToHandle("UD デジタル 教科書体 NK-B",32, -1, DX_FONTTYPE_ANTIALIASING);
 
 	ChangeFont("UD デジタル 教科書体 NK-B");
 	ChangeFontType(DX_FONTTYPE_ANTIALIASING);
@@ -531,7 +559,7 @@ VOID DELETE_MOVE_LINE(VOID)
 {
 	int deletecount = 0;	//消去した列数
 
-	int y_tmp = 0;	//一度に消えた列のうち一番上の列番号の１つ上の列番号を保存
+	int y_tmp = 0;	//消えた列の列番号の１つ上の列番号を保存
 
 	if (reverse_flag == false)
 	{
@@ -657,7 +685,7 @@ VOID DELETE_MOVE_LINE(VOID)
 
 				y_tmp = y + 1;	//列番号を保存
 				
-				//消去した列の上の列のブロックを上へ移動
+				//消去した列の下の列のブロックを上へ移動
 				for (int y = y_tmp; y < 18; y++)
 				{
 					for (int x = 0; x < 10; x++)
@@ -831,6 +859,24 @@ VOID MY_GAME_RANKING(VOID)
 	}
 
 	DrawGraph(bg_rank.x, bg_rank.y, bg_rank.handle, TRUE);
+
+	DrawFormatStringToHandle(170, 146, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No1);
+	DrawFormatStringToHandle(170, 184, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No2);
+	DrawFormatStringToHandle(170, 222, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No3);
+	DrawFormatStringToHandle(170, 260, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No4);
+	DrawFormatStringToHandle(170, 298, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No5);
+
+	DrawFormatStringToHandle(390, 146, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No1);
+	DrawFormatStringToHandle(390, 184, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No2);
+	DrawFormatStringToHandle(390, 222, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No3);
+	DrawFormatStringToHandle(390, 260, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No4);
+	DrawFormatStringToHandle(390, 298, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No5);
+
+	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No1.min, No1.sec, No1.m_sec);
+	/*DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No2.min, No2.sec, No2.m_sec);
+	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No3.min, No3.sec, No3.m_sec);
+	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No4.min, No4.sec, No4.m_sec);
+	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No5.min, No5.sec, No5.m_sec);*/
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
