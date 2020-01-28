@@ -557,82 +557,77 @@ VOID DELETE_MOVE_LINE(VOID)
 					stage_put_flag[y][x] = false;
 				}
 
-				//最初の１回だけ
-				if (deletecount == 0)
-				{
-					y_tmp = y - 1;	//列番号を保存
-				}
+				y_tmp = y - 1;	//列番号を保存
 
-				deletecount++;
-			}
-		}
-
-		//消去した列の上の列のブロックを消去した列数分下へ移動
-		for (int y = y_tmp; y > -1; y--)
-		{
-			for (int x = 0; x < 10; x++)
-			{
-				if (stage_move[y][x] != -1 && stage_put_flag[y][x] == true)
+				//消去した列の上の列のブロックを下へ移動
+				for (int y = y_tmp; y > -1; y--)
 				{
-					switch (stage_move[y][x])
+					for (int x = 0; x < 10; x++)
 					{
-					case RED:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+						if (stage_move[y][x] != -1 && stage_put_flag[y][x] == true)
+						{
+							switch (stage_move[y][x])
+							{
+							case RED:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = RED;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = RED;
+								break;
 
-					case ORANGE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case ORANGE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = ORANGE;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = ORANGE;
+								break;
 
-					case YELLOW:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case YELLOW:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = YELLOW;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = YELLOW;
+								break;
 
-					case GREEN:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case GREEN:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = GREEN;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = GREEN;
+								break;
 
-					case RIGHTBLUE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case RIGHTBLUE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = RIGHTBLUE;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = RIGHTBLUE;
+								break;
 
-					case BLUE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case BLUE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = BLUE;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = BLUE;
+								break;
 
-					case PURPLE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case PURPLE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y + deletecount][x] = true;
-						stage_move[y + deletecount][x] = PURPLE;
-						break;
+								stage_put_flag[y + 1][x] = true;
+								stage_move[y + 1][x] = PURPLE;
+								break;
+							}
+						}
 					}
 				}
+				deletecount++;
 			}
 		}
 	}
@@ -660,82 +655,77 @@ VOID DELETE_MOVE_LINE(VOID)
 					stage_put_flag[y][x] = false;
 				}
 
-				//最初の１回だけ
-				if (deletecount == 0)
+				y_tmp = y + 1;	//列番号を保存
+				
+				//消去した列の上の列のブロックを上へ移動
+				for (int y = y_tmp; y < 18; y++)
 				{
-					y_tmp = y + 1;	//列番号を保存
-				}
-
-				deletecount++;
-			}
-		}
-
-		//消去した列の上の列のブロックを消去した列数分下へ移動
-		for (int y = y_tmp; y < 18; y++)
-		{
-			for (int x = 0; x < 10; x++)
-			{
-				if (stage_move[y][x] != -1 && stage_put_flag[y][x] == true)
-				{
-					switch (stage_move[y][x])
+					for (int x = 0; x < 10; x++)
 					{
-					case RED:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+						if (stage_move[y][x] != -1 && stage_put_flag[y][x] == true)
+						{
+							switch (stage_move[y][x])
+							{
+							case RED:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = RED;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = RED;
+								break;
 
-					case ORANGE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case ORANGE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = ORANGE;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = ORANGE;
+								break;
 
-					case YELLOW:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case YELLOW:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = YELLOW;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = YELLOW;
+								break;
 
-					case GREEN:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case GREEN:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = GREEN;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = GREEN;
+								break;
 
-					case RIGHTBLUE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case RIGHTBLUE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = RIGHTBLUE;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = RIGHTBLUE;
+								break;
 
-					case BLUE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case BLUE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = BLUE;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = BLUE;
+								break;
 
-					case PURPLE:
-						stage_move[y][x] = -1;
-						stage_put_flag[y][x] = false;
+							case PURPLE:
+								stage_move[y][x] = -1;
+								stage_put_flag[y][x] = false;
 
-						stage_put_flag[y - deletecount][x] = true;
-						stage_move[y - deletecount][x] = PURPLE;
-						break;
+								stage_put_flag[y - 1][x] = true;
+								stage_move[y - 1][x] = PURPLE;
+								break;
+							}
+						}
 					}
 				}
+				deletecount++;
 			}
 		}
 	}
