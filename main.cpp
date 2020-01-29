@@ -827,7 +827,7 @@ VOID MY_GAME_TITLE(VOID)
 	nextmino_rand = -1;
 	holdmino = -1;
 
-	reverse_flag = false;
+	reverse_flag = true;
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
@@ -4051,6 +4051,22 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								stage_move[y_move + 1][x_move] = -1;
 							}
 						}
+						else if (x_move == 1)
+						{
+							//移動先にブロックが無ければ
+							if (stage_move[y_move - 2][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1)
+							{
+								stage_move[y_move - 2][x_move] = -1;
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move + 1][x_move] = -1;
+								++x_move;
+								rotation = 0;
+								stage_move[y_move - 2][x_move] = -1;
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move + 1][x_move] = -1;
+							}
+						}
 						else if (stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、全て条件は同じ
 						{
 							//下端で横状態から縦に回しすぐ横に戻すとなぜか変なとこにブロックが残るためそれを消す処理
@@ -4373,6 +4389,22 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								stage_move[y_move + 1][x_move] = -1;
 								stage_move[y_move + 2][x_move] = -1;
 								x_move -= 2;
+								rotation = 0;
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move + 1][x_move] = -1;
+								stage_move[y_move + 2][x_move] = -1;
+							}
+						}
+						else if (x_move == 8)
+						{
+							//移動先にブロックが無ければ
+							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 2][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1)
+							{
+								stage_move[y_move - 1][x_move] = -1;
+								stage_move[y_move + 1][x_move] = -1;
+								stage_move[y_move + 2][x_move] = -1;
+								--x_move;
 								rotation = 0;
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move][x_move] = -1;
