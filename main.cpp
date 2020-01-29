@@ -827,7 +827,7 @@ VOID MY_GAME_TITLE(VOID)
 	nextmino_rand = -1;
 	holdmino = -1;
 
-	reverse_flag = false;
+	reverse_flag = true;
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
@@ -1557,8 +1557,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move + 1] = -1;
+							}
 						}
 					}
 					else if (rotation == 90)
@@ -1570,13 +1573,22 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 2] == -1)
 							{
 								stage_move[y_move - 1][x_move] = -1;
-								stage_move[y_move + 1][x_move - 1] = -1;
+								if (y_move < 17)
+								{
+									stage_move[y_move + 1][x_move - 1] = -1;
+								}
 								--x_move;
 								rotation = 0;
 								stage_move[y_move - 1][x_move] = -1;
-								stage_move[y_move][x_move] = -1;
-								stage_move[y_move][x_move - 1] = -1;
-								stage_move[y_move + 1][x_move - 1] = -1;
+								if (y_move < 18)
+								{
+									stage_move[y_move][x_move] = -1;
+									stage_move[y_move][x_move - 1] = -1;
+								}
+								if (y_move < 17)
+								{
+									stage_move[y_move + 1][x_move - 1] = -1;
+								}
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
@@ -1584,9 +1596,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move + 1][x_move - 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+							}
+							if (y_move < 17)
+							{
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
 						}
 					}
 				}
@@ -1624,8 +1642,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						tmp += 1000;
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move + 1] = -1;
+						if (y_move < 18)
+						{
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+						}
 						--y_move;
 					}
 					/*上昇処理(定期)ここまで*/
@@ -1638,8 +1659,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							/*tmp += 1000;*/
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move + 1] = -1;
+							}
 							--y_move;
 						}
 						drop_tmp += 100;
@@ -1654,14 +1678,20 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move + 1] = -1;
+							}
 							--y_move;	
 						}
 						stage_move[y_move - 1][x_move - 1] = RED;
 						stage_move[y_move - 1][x_move] = RED;
-						stage_move[y_move][x_move] = RED;
-						stage_move[y_move][x_move + 1] = RED;
+						if (y_move < 18)
+						{
+							stage_move[y_move][x_move] = RED;
+							stage_move[y_move][x_move + 1] = RED;
+						}
 
 						mino_rand = nextmino_rand;
 						nextmino_rand = GetRand(MINO_KIND - 1);
@@ -1683,8 +1713,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move + 1] = -1;
+							}
 							--x_move;
 						}
 					}
@@ -1698,8 +1731,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move + 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move + 1] = -1;
+							}
 							++x_move;
 						}
 					}
@@ -1739,9 +1775,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理ここまで*/
 						tmp += 1000;
 						stage_move[y_move - 1][x_move] = -1;
-						stage_move[y_move][x_move] = -1;
-						stage_move[y_move][x_move - 1] = -1;
-						stage_move[y_move + 1][x_move - 1] = -1;
+						if (y_move < 18)
+						{
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+						}
+						if (y_move < 17)
+						{
+							stage_move[y_move + 1][x_move - 1] = -1;
+						}
 						--y_move;
 					}
 					/*上昇処理(定期)ここまで*/
@@ -1753,9 +1795,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							/*tmp += 1000;*/
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move + 1][x_move - 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+							}
+							if (y_move < 17)
+							{
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
 							--y_move;
 						}
 						drop_tmp += 100;
@@ -1769,15 +1817,27 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move + 1][x_move - 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+							}
+							if (y_move < 17)
+							{
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
 							--y_move;
 						}
 						stage_move[y_move - 1][x_move] = RED;
-						stage_move[y_move][x_move] = RED;
-						stage_move[y_move][x_move - 1] = RED;
-						stage_move[y_move + 1][x_move - 1] = RED;
+						if (y_move < 18)
+						{
+							stage_move[y_move][x_move] = RED;
+							stage_move[y_move][x_move - 1] = RED;
+						}
+						if (y_move < 17)
+						{
+							stage_move[y_move + 1][x_move - 1] = RED;
+						}
 
 						mino_rand = nextmino_rand;
 						nextmino_rand = GetRand(MINO_KIND - 1);
@@ -1799,9 +1859,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1))	//通常処理
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move + 1][x_move - 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+							}
+							if (y_move < 17)
+							{
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
 							--x_move;
 						}
 					}
@@ -1815,9 +1881,15 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(stage_move[y_move + 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))	//通常処理
 						{
 							stage_move[y_move - 1][x_move] = -1;
-							stage_move[y_move][x_move] = -1;
-							stage_move[y_move][x_move - 1] = -1;
-							stage_move[y_move + 1][x_move - 1] = -1;
+							if (y_move < 18)
+							{
+								stage_move[y_move][x_move] = -1;
+								stage_move[y_move][x_move - 1] = -1;
+							}
+							if (y_move < 17)
+							{
+								stage_move[y_move + 1][x_move - 1] = -1;
+							}
 							++x_move;
 						}
 					}
@@ -3076,6 +3148,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move + 1] = ORANGE;
+						stage_move[y_move][x_move - 1] = ORANGE;
+						stage_move[y_move][x_move] = ORANGE;
+						stage_move[y_move][x_move + 1] = ORANGE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(ORANGE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -3163,8 +3264,37 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = ORANGE;
+						stage_move[y_move][x_move - 1] = ORANGE;
+						stage_move[y_move + 1][x_move - 1] = ORANGE;
+						stage_move[y_move + 1][x_move] = ORANGE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(ORANGE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
-					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
+					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
@@ -3180,7 +3310,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*左移動処理ここまで*/
 
 					/*右移動処理*/
-					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8)
 					{
 						if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1) ||	//下端処理
@@ -3249,6 +3379,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = ORANGE;
+						stage_move[y_move - 1][x_move] = ORANGE;
+						stage_move[y_move - 1][x_move + 1] = ORANGE;
+						stage_move[y_move][x_move - 1] = ORANGE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(ORANGE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -3265,7 +3424,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*左移動処理ここまで*/
 
 					/*右移動処理*/
-					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move] == -1)
+					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 					{
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move] == -1))	//通常・下端処理
@@ -3335,6 +3494,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*降下処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = ORANGE;
+						stage_move[y_move - 1][x_move] = ORANGE;
+						stage_move[y_move][x_move] = ORANGE;
+						stage_move[y_move + 1][x_move] = ORANGE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(ORANGE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
@@ -3753,6 +3941,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					drop_tmp += 100;
 				}
 				/*上昇処理(ソフトドロップここまで)*/
+
+				/*降下処理(ハードドロップ)*/
+				if (AllKeyState[KEY_INPUT_UP] == 1)
+				{
+					//一つ上が空白の間ミノを上げ続ける
+					while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
+					{
+						stage_move[y_move - 1][x_move - 1] = -1;
+						stage_move[y_move - 1][x_move] = -1;
+						stage_move[y_move][x_move - 1] = -1;
+						stage_move[y_move][x_move] = -1;
+						--y_move;
+					}
+					stage_move[y_move - 1][x_move - 1] = YELLOW;
+					stage_move[y_move - 1][x_move] = YELLOW;
+					stage_move[y_move][x_move - 1] = YELLOW;
+					stage_move[y_move][x_move] = YELLOW;
+
+					mino_rand = nextmino_rand;
+					nextmino_rand = GetRand(MINO_KIND - 1);
+					STAGE_FLAG_CHANGE_TRUE(YELLOW);
+					holdfinish_flag = false;
+					first_flag = true;
+					/*tmp = 0;
+					drop_tmp = 0;*/
+					DELETE_MOVE_LINE();
+					break;
+				}
+				/*降下処理(ハードドロップ)ここまで*/
 
 				/*左移動処理*/
 				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
@@ -4341,7 +4558,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*回転処理(Sミノは回転のパターンが２通りのため左右を分けずに書く)*/
 				if (AllKeyState[KEY_INPUT_Z] == 1 || AllKeyState[KEY_INPUT_C] == 1)
 				{
-					if (rotation == 0 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1)
+					if (rotation == 0)
 					{
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下端で回す場合
@@ -4436,6 +4653,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*上昇処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move] = GREEN;
+						stage_move[y_move - 1][x_move + 1] = GREEN;
+						stage_move[y_move][x_move - 1] = GREEN;
+						stage_move[y_move][x_move] = GREEN;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(GREEN);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -4521,6 +4767,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*上昇処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = GREEN;
+						stage_move[y_move][x_move - 1] = GREEN;
+						stage_move[y_move][x_move] = GREEN;
+						stage_move[y_move + 1][x_move] = GREEN;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(GREEN);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
@@ -5299,6 +5574,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*上昇処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 0 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false && stage_put_flag[y_move - 1][x_move + 2] == false)
+						{
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							stage_move[y_move][x_move + 2] = -1;
+							--y_move;
+						}
+						stage_move[y_move][x_move - 1] = RIGHTBLUE;
+						stage_move[y_move][x_move] = RIGHTBLUE;
+						stage_move[y_move][x_move + 1] = RIGHTBLUE;
+						stage_move[y_move][x_move + 2] = RIGHTBLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -5382,6 +5686,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*上昇処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							stage_move[y_move + 2][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move] = RIGHTBLUE;
+						stage_move[y_move][x_move] = RIGHTBLUE;
+						stage_move[y_move + 1][x_move] = RIGHTBLUE;
+						stage_move[y_move + 2][x_move] = RIGHTBLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 1)
@@ -6479,7 +6812,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							stage_move[y_move + 1][x_move] = -1;
 						}
 					}
-					else if (rotation == 180 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
+					else if (rotation == 180)
 					{
 						if (y_move == 18 ||	//下にはみ出たときに回す場合
 							(y_move == 17 && stage_move[y_move][x_move - 1] == -1) ||	//下端で回す場合
@@ -6661,6 +6994,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*上昇処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = BLUE;
+						stage_move[y_move][x_move - 1] = BLUE;
+						stage_move[y_move][x_move] = BLUE;
+						stage_move[y_move][x_move + 1] = BLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(BLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
 					{
@@ -6747,6 +7109,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = BLUE;
+						stage_move[y_move - 1][x_move] = BLUE;
+						stage_move[y_move][x_move - 1] = BLUE;
+						stage_move[y_move + 1][x_move - 1] = BLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(BLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 					{
@@ -6831,6 +7222,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*降下処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = BLUE;
+						stage_move[y_move - 1][x_move] = BLUE;
+						stage_move[y_move - 1][x_move + 1] = BLUE;
+						stage_move[y_move][x_move + 1] = BLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(BLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
@@ -6917,6 +7337,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*降下処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move] = BLUE;
+						stage_move[y_move][x_move] = BLUE;
+						stage_move[y_move + 1][x_move - 1] = BLUE;
+						stage_move[y_move + 1][x_move] = BLUE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(BLUE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
@@ -8194,6 +8643,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move][x_move + 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move] = PURPLE;
+						stage_move[y_move][x_move - 1] = PURPLE;
+						stage_move[y_move][x_move] = PURPLE;
+						stage_move[y_move][x_move + 1] = PURPLE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(PURPLE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -8280,6 +8758,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(ソフトドロップここまで)*/
 
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move - 1] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = PURPLE;
+						stage_move[y_move][x_move - 1] = PURPLE;
+						stage_move[y_move][x_move] = PURPLE;
+						stage_move[y_move + 1][x_move - 1] = PURPLE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(PURPLE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
+
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 					{
@@ -8364,6 +8871,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*降下処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
+						{
+							stage_move[y_move - 1][x_move - 1] = -1;
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move - 1][x_move + 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move - 1] = PURPLE;
+						stage_move[y_move - 1][x_move] = PURPLE;
+						stage_move[y_move - 1][x_move + 1] = PURPLE;
+						stage_move[y_move][x_move] = PURPLE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(PURPLE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
@@ -8450,6 +8986,35 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						drop_tmp += 100;
 					}
 					/*降下処理(ソフトドロップここまで)*/
+
+					/*降下処理(ハードドロップ)*/
+					if (AllKeyState[KEY_INPUT_UP] == 1)
+					{
+						//一つ上が空白の間ミノを上げ続ける
+						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
+						{
+							stage_move[y_move - 1][x_move] = -1;
+							stage_move[y_move][x_move - 1] = -1;
+							stage_move[y_move][x_move] = -1;
+							stage_move[y_move + 1][x_move] = -1;
+							--y_move;
+						}
+						stage_move[y_move - 1][x_move] = PURPLE;
+						stage_move[y_move][x_move - 1] = PURPLE;
+						stage_move[y_move][x_move] = PURPLE;
+						stage_move[y_move + 1][x_move] = PURPLE;
+
+						mino_rand = nextmino_rand;
+						nextmino_rand = GetRand(MINO_KIND - 1);
+						STAGE_FLAG_CHANGE_TRUE(PURPLE);
+						holdfinish_flag = false;
+						first_flag = true;
+						/*tmp = 0;
+						drop_tmp = 0;*/
+						DELETE_MOVE_LINE();
+						break;
+					}
+					/*降下処理(ハードドロップ)ここまで*/
 
 					/*左移動処理*/
 					if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
