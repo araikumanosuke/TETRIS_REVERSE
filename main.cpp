@@ -860,23 +860,29 @@ VOID MY_GAME_RANKING(VOID)
 
 	DrawGraph(bg_rank.x, bg_rank.y, bg_rank.handle, TRUE);
 
-	DrawFormatStringToHandle(170, 146, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No1);
-	DrawFormatStringToHandle(170, 184, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No2);
-	DrawFormatStringToHandle(170, 222, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No3);
-	DrawFormatStringToHandle(170, 260, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No4);
-	DrawFormatStringToHandle(170, 298, GetColor(0, 0, 0), rank_fonthandle, "%d", score_No5);
+	/*スコアランキング表示*/
+	DrawFormatStringToHandle(100, 146, GetColor(0, 0, 0), rank_fonthandle, "%8d", score_No1);
+	DrawFormatStringToHandle(100, 184, GetColor(0, 0, 0), rank_fonthandle, "%8d", score_No2);
+	DrawFormatStringToHandle(100, 222, GetColor(0, 0, 0), rank_fonthandle, "%8d", score_No3);
+	DrawFormatStringToHandle(100, 260, GetColor(0, 0, 0), rank_fonthandle, "%8d", score_No4);
+	DrawFormatStringToHandle(100, 298, GetColor(0, 0, 0), rank_fonthandle, "%8d", score_No5);
+	/*スコアランキング表示ここまで*/
 
-	DrawFormatStringToHandle(390, 146, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No1);
-	DrawFormatStringToHandle(390, 184, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No2);
-	DrawFormatStringToHandle(390, 222, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No3);
-	DrawFormatStringToHandle(390, 260, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No4);
-	DrawFormatStringToHandle(390, 298, GetColor(0, 0, 0), rank_fonthandle, "%d", deleteline_No5);
+	/*消去ライン表示*/
+	DrawFormatStringToHandle(390, 146, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No1);
+	DrawFormatStringToHandle(390, 184, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No2);
+	DrawFormatStringToHandle(390, 222, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No3);
+	DrawFormatStringToHandle(390, 260, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No4);
+	DrawFormatStringToHandle(390, 298, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No5);
+	/*消去ライン表示ここまで*/
 
-	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No1.min, No1.sec, No1.m_sec);
-	/*DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No2.min, No2.sec, No2.m_sec);
-	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No3.min, No3.sec, No3.m_sec);
-	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No4.min, No4.sec, No4.m_sec);
-	DrawFormatStringToHandle(240, 413, GetColor(0, 0, 0), rank_fonthandle, "%d : %d . %d", No5.min, No5.sec, No5.m_sec);*/
+	/*タイムランキング表示*/
+	DrawFormatStringToHandle(190, 413, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", No1.min, No1.sec, No1.m_sec);
+	DrawFormatStringToHandle(190, 451, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", No2.min, No2.sec, No2.m_sec);
+	DrawFormatStringToHandle(190, 489, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", No3.min, No3.sec, No3.m_sec);
+	DrawFormatStringToHandle(190, 527, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", No4.min, No4.sec, No4.m_sec);
+	DrawFormatStringToHandle(190, 565, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", No5.min, No5.sec, No5.m_sec);
+	/*タイムランキング表示ここまで*/
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
@@ -910,31 +916,16 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	DrawGraph(bg_play_endless.x, bg_play_endless.y, bg_play_endless.handle, TRUE);
 
 	//反転までの残りライン数
-	if (reverseline >= 10)	//２ケタ
-	{
-		DrawFormatStringToHandle(37, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
-	}
-	else if (reverseline < 10)	//１ケタ
-	{
-		DrawFormatStringToHandle(55, 320, GetColor(255, 100, 0), line_fonthandle, "%d", reverseline);
-	}
-
+	DrawFormatStringToHandle(38, 320, GetColor(255, 100, 0), line_fonthandle, "%2d", reverseline);
+	
 	//消去したライン
 	if (deleteline >= 999)	//カンスト
 	{
-		DrawFormatStringToHandle(440, 320, GetColor(0, 0, 255), line_fonthandle, "%d", 999);
+		DrawFormatStringToHandle(446, 320, GetColor(0, 0, 255), line_fonthandle, "%3d", 999);
 	}
-	else if(deleteline >= 100)	//３ケタ
+	else
 	{
-		DrawFormatStringToHandle(440, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
-	}
-	else if (deleteline >= 10)	//２ケタ
-	{
-		DrawFormatStringToHandle(458, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
-	}
-	else if (deleteline < 10)	//１ケタ
-	{
-		DrawFormatStringToHandle(476, 320, GetColor(0, 0, 255), line_fonthandle, "%d", deleteline);
+		DrawFormatStringToHandle(446, 320, GetColor(0, 0, 255), line_fonthandle, "%3d", deleteline);
 	}
 
 	//スコア
@@ -1006,6 +997,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;	
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;	
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;	
+							
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -1269,6 +1318,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+						
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -1537,6 +1644,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -2098,6 +2263,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -2666,6 +2889,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -2790,6 +3071,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+						
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -2918,6 +3257,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -3179,6 +3576,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -3443,6 +3898,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -3729,6 +4242,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -4020,6 +4591,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -4576,6 +5205,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -5137,6 +5824,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -5693,6 +6438,64 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				{
 					if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 					{
+						/*ランキング更新処理*/
+						if (score_No1 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score_No1;
+							deleteline_No2 = deleteline_No1;
+
+							score_No1 = score;
+							deleteline_No1 = deleteline;
+						}
+						else if (score_No2 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score_No2;
+							deleteline_No3 = deleteline_No2;
+
+							score_No2 = score;
+							deleteline_No2 = deleteline;
+						}
+						else if (score_No3 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score_No3;
+							deleteline_No4 = deleteline_No3;
+
+							score_No3 = score;
+							deleteline_No3 = deleteline;
+						}
+						else if (score_No4 < score)
+						{
+							score_No5 = score_No4;
+							deleteline_No5 = deleteline_No4;
+
+							score_No4 = score;
+							deleteline_No4 = deleteline;
+						}
+						else if (score_No5 < score)
+						{
+							score_No5 = score;
+							deleteline_No5 = deleteline;
+						}
+						/*ランキング更新処理ここまで*/
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
