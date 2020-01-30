@@ -105,6 +105,10 @@ int reverseline;
 int clearline;
 int score;
 
+int tmp;	//ミノの自動落下 / 自動上昇にて使用
+
+int stop_tmp;	//確認画面で使う
+
 /*ランキングで使う変数*/
 static int score_No1 = 0;
 static int score_No2 = 0;
@@ -128,6 +132,8 @@ static TIME No5 = { 0,0,0 };
 bool reverse_flag;
 
 bool first_flag;
+
+bool play_flag;
 
 int ready_fonthandle;
 int Go_fonthandle;
@@ -827,7 +833,9 @@ VOID MY_GAME_TITLE(VOID)
 	nextmino_rand = -1;
 	holdmino = -1;
 
-	reverse_flag = true;
+	reverse_flag = false;
+
+	play_flag = true;
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
@@ -940,11 +948,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 	static int syoki_temp;
 
+	static int timer;	//ミノの落下 / 上昇にて使用
+
 	static int x_move;
 	static int y_move;
 
-	static int timer;
-	static int tmp;
 	static int drop_tmp;
 	static int rotation;
 
@@ -983,7 +991,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 		SET_BLOCK_MOVE(&block_rightblue, RIGHTBLUE);
 		SET_BLOCK_MOVE(&block_blue, BLUE);
 		SET_BLOCK_MOVE(&block_purple, PURPLE);
-
+		
 		timer = GetNowCount();
 
 		//操作するミノ
@@ -1004,14 +1012,14 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							deleteline_No5 = deleteline_No4;
 
 							score_No4 = score_No3;
-							deleteline_No4 = deleteline_No3;	
+							deleteline_No4 = deleteline_No3;
 
 							score_No3 = score_No2;
-							deleteline_No3 = deleteline_No2;	
+							deleteline_No3 = deleteline_No2;
 
 							score_No2 = score_No1;
-							deleteline_No2 = deleteline_No1;	
-							
+							deleteline_No2 = deleteline_No1;
+
 							score_No1 = score;
 							deleteline_No1 = deleteline;
 						}
@@ -1442,7 +1450,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 					}
 					/*右移動処理ここまで*/
-				}				
+				}
 			}
 			else if (reverse_flag == true)
 			{
@@ -1508,7 +1516,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							deleteline_No5 = deleteline;
 						}
 						/*ランキング更新処理ここまで*/
-						
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -1592,7 +1600,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
-								 (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
@@ -1683,7 +1691,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move][x_move + 1] = -1;
 							}
-							--y_move;	
+							--y_move;
 						}
 						stage_move[y_move - 1][x_move - 1] = RED;
 						stage_move[y_move - 1][x_move] = RED;
@@ -1896,7 +1904,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理ここまで*/
 				}
 			}
-			
+
 			break;
 
 		case ORANGE:
@@ -2047,7 +2055,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たとき
-								 (stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -2108,7 +2116,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 0;
 							if (y_move > 0)
@@ -2171,7 +2179,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if (y_move == -1 ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -2228,7 +2236,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 0;
 							if (y_move > 0)
@@ -2573,7 +2581,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 					/*降下処理(定期)ここまで*/
 
-					 /*降下処理(ソフトドロップ)*/
+						/*降下処理(ソフトドロップ)*/
 					if (timer > drop_tmp)
 					{
 						if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
@@ -2798,7 +2806,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理*/
 					if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 8)
 					{
-						
+
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たとき
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
@@ -2955,7 +2963,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
-								 (stage_move[y_move][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))
+							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))
 						{
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -2996,7 +3004,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
-								 (stage_move[y_move][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -3082,7 +3090,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
-								 (stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -3366,7 +3374,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ソフトドロップ)*/
 					if (timer > drop_tmp)
 					{
-						if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] ==false)
+						if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
 							/*tmp += 1000;*/
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -3661,7 +3669,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					}
 				}
 				/*HOLD処理ここまで*/
-				
+
 				/*ブロック表示処理*/
 				if (y_move > -1)	//上にはみ出たら上部は表示しない
 				{
@@ -3854,7 +3862,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							deleteline_No5 = deleteline;
 						}
 						/*ランキング更新処理ここまで*/
-						
+
 						//StopSoundMem(bgm_play.handle);
 						GameSceneNow = (int)GAME_SCENE_END_OVER;
 						return;
@@ -4152,7 +4160,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 0;
 							if (y_move > 0)
@@ -4950,8 +4958,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 0 && stage_move[y_move + 1][x_move] == -1) ||	//上端で回す場合
-								 (y_move == 1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上から２番目で回す場合
-								 (stage_move[y_move - 2][x_move] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))		//通常処理
+							(y_move == 1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上から２番目で回す場合
+							(stage_move[y_move - 2][x_move] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))		//通常処理
 						{
 							rotation = 90;
 							stage_move[y_move][x_move - 2] = -1;
@@ -5447,8 +5455,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 17 && stage_move[y_move - 1][x_move] == -1) ||	//下端で回す場合
-								 (y_move == 16 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//下から２番目で回す場合
-								 (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 2][x_move] == -1))	//通常処理
+							(y_move == 16 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//下から２番目で回す場合
+							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 2][x_move] == -1))	//通常処理
 						{
 							rotation = 90;
 							stage_move[y_move][x_move - 1] = -1;
@@ -5519,7 +5527,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
 							stage_move[y_move + 2][x_move] = -1;
-						}	
+						}
 					}
 				}
 				/*回転処理ここまで*/
@@ -5749,7 +5757,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理ここまで*/
 				}
 			}
-			
+
 			break;
 
 		case BLUE:
@@ -5899,7 +5907,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -5996,7 +6004,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							stage_move[y_move + 1][x_move + 1] = -1;
 						}
 					}
-					else if (rotation == 90)	
+					else if (rotation == 90)
 					{
 						if (x_move == 9)
 						{
@@ -6015,7 +6023,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 									stage_move[y_move - 1][x_move - 1] = -1;
 									stage_move[y_move - 1][x_move] = -1;
 								}
-								if(y_move > -1)
+								if (y_move > -1)
 								{
 									stage_move[y_move][x_move - 1] = -1;
 								}
@@ -6023,7 +6031,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -6045,8 +6053,8 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
 							rotation = 270;
-							if(y_move > -1)
-							{ 
+							if (y_move > -1)
+							{
 								stage_move[y_move][x_move - 1] = -1;
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move][x_move + 1] = -1;
@@ -6065,7 +6073,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								{
 									stage_move[y_move - 1][x_move] = -1;
 								}
-								if(y_move > -1)
+								if (y_move > -1)
 								{
 									stage_move[y_move][x_move] = -1;
 								}
@@ -6084,7 +6092,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 0;
 							if (y_move > 0)
@@ -6803,7 +6811,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
-								 (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 180;
 							stage_move[y_move - 1][x_move] = -1;
@@ -6843,7 +6851,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if (y_move == 18 ||	//下にはみ出たとき
-								 (stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -6889,7 +6897,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
-								 (stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -6929,7 +6937,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
-								 (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
@@ -7400,7 +7408,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理ここまで*/
 				}
 			}
-			
+
 			break;
 
 		case PURPLE:
@@ -7549,10 +7557,10 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 								}
 								stage_move[y_move + 1][x_move] = -1;
 							}
-							
+
 						}
 						else if (y_move == -1 ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -7675,7 +7683,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常・上端処理
+							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常・上端処理
 						{
 							rotation = 180;
 							if (y_move > 0)
@@ -8162,7 +8170,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 							stage_move[y_move + 1][x_move] = -1;
 							x_move++;
-						}	
+						}
 					}
 					/*右移動処理ここまで*/
 				}
@@ -8493,7 +8501,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
-								 (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -8578,7 +8586,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if (y_move == 18 ||	//上にはみ出たときに回す場合
-								 (stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
+							(stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
@@ -9049,7 +9057,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*右移動処理ここまで*/
 				}
 			}
-			
+
 			break;
 		}
 
@@ -9312,12 +9320,11 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 			}
 			break;
 		}
-
 	}
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
-		INIT_STAGE_ALL();	//確認画面から戻ってきたときにミノのコピーがその地点に残ってしまうバグの対策(急場しのぎ)
+		//INIT_STAGE_ALL();	//確認画面から戻ってきたときにミノのコピーがその地点に残ってしまうバグの対策(急場しのぎ)
 		GameSceneNow = (int)GAME_SCENE_CHECK_ENDLESS;
 	}
 
@@ -9352,13 +9359,16 @@ VOID MY_GAME_PLAY_TIME(VOID)
 }
 
 VOID MY_GAME_CHECK_ENDLESS(VOID)
-{
+{	
+	static int stop_timer;	//止まっている時間を計測
+	stop_timer = GetNowCount();
+
 	SetFontSize(24);
 	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
 	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
 	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
 	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
-
+	
 	if (AllKeyState[KEY_INPUT_Y] != 0)
 	{
 		//StopSoundMem(bgm_play.handle);
@@ -9366,6 +9376,7 @@ VOID MY_GAME_CHECK_ENDLESS(VOID)
 	}
 	else if (AllKeyState[KEY_INPUT_N] != 0)
 	{
+		tmp = stop_timer + 1000;	//１秒分足してtmpに代入
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
 
