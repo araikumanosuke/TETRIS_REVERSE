@@ -21,8 +21,10 @@
 
 #define GAME_IMAGE_BG_TITLE				"IMAGE\\bg_title.png"
 #define GAME_IMAGE_BG_RANK				"IMAGE\\bg_rank.png"
+#define GAME_IMAGE_BG_SOUSA				"IMAGE\\bg_sousa.png"
 #define GAME_IMAGE_BG_PLAY_ENDLESS		"IMAGE\\bg_play_endless.png"
 #define GAME_IMAGE_BG_PLAY_TIME			"IMAGE\\bg_play_time.png"
+#define GAME_IMAGE_BG_CHECK_ENDLESS		"IMAGE\\bg_check_endless.png"
 #define GAME_IMAGE_BG_END_OVER			"IMAGE\\bg_end_over.png"
 #define GAME_IMAGE_BG_END_CLEAR			"IMAGE\\bg_end_clear.png"
 
@@ -133,8 +135,6 @@ bool reverse_flag;
 
 bool first_flag;
 
-bool play_flag;
-
 int ready_fonthandle;
 int Go_fonthandle;
 int line_fonthandle;
@@ -207,10 +207,12 @@ SOUND bgm_end_over;
 
 IMAGE bg_title;
 IMAGE bg_rank;
+IMAGE bg_sousa;
 IMAGE bg_end_over;
 IMAGE bg_end_clear;
 IMAGE bg_play_endless;
 IMAGE bg_play_time;
+IMAGE bg_check_endless;
 
 IMAGE block_red;
 IMAGE block_orange;
@@ -241,7 +243,7 @@ VOID RANKING_UPDATE(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
-VOID MY_GAME_SOZAI(VOID);			//素材表示
+VOID MY_GAME_SOUSA(VOID);			//操作説明
 VOID MY_GAME_PLAY_ENDLESS(VOID);	//プレイ・エンドレス
 VOID MY_GAME_PLAY_TIME(VOID);		//プレイ・タイムアタック
 VOID MY_GAME_CHECK_ENDLESS(VOID);	//確認
@@ -267,8 +269,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
+	MY_IMAGE_LOAD(&bg_sousa, 0, 0, GAME_IMAGE_BG_SOUSA);
 	MY_IMAGE_LOAD(&bg_play_endless, 0, 0, GAME_IMAGE_BG_PLAY_ENDLESS);
 	MY_IMAGE_LOAD(&bg_play_time, 0, 0, GAME_IMAGE_BG_PLAY_TIME);
+	MY_IMAGE_LOAD(&bg_check_endless, 0, 0, GAME_IMAGE_BG_CHECK_ENDLESS);
 	MY_IMAGE_LOAD(&bg_end_over, 0, 0, GAME_IMAGE_BG_END_OVER);
 	MY_IMAGE_LOAD(&bg_end_clear, 0, 0, GAME_IMAGE_BG_END_CLEAR);
 
@@ -310,7 +314,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 
 		case (int)GAME_SCENE_SOZAI:
-			MY_GAME_SOZAI();
+			MY_GAME_SOUSA();
 			break;
 
 		case (int)GAME_SCENE_PLAY_ENDLESS:
@@ -895,8 +899,6 @@ VOID MY_GAME_TITLE(VOID)
 
 	reverse_flag = false;
 
-	play_flag = true;
-
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
 		//StopSoundMem(bgm_title_etc.handle);
@@ -960,15 +962,14 @@ VOID MY_GAME_RANKING(VOID)
 	return;
 }
 
-VOID MY_GAME_SOZAI(VOID)
+VOID MY_GAME_SOUSA(VOID)
 {
 	if (CheckSoundMem(bgm_title_etc.handle) == 0)
 	{
 		//PlaySoundMem(bgm_title_etc.handle, DX_PLAYTYPE_LOOP);
 	}
 
-	DrawString(0, 0, "素材表示画面", GetColor(255, 255, 255));
-	DrawString(0, 30, "タイトルに戻る：ＢＡＣＫＳＰＡＣＥキー", GetColor(255, 255, 255));
+	DrawGraph(bg_sousa.x, bg_sousa.y, bg_sousa.handle, TRUE);
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
@@ -8666,11 +8667,7 @@ VOID MY_GAME_CHECK_ENDLESS(VOID)
 	static int stop_timer;	//止まっている時間を計測
 	stop_timer = GetNowCount();
 
-	SetFontSize(24);
-	DrawString(0, 0, "確認画面(エンドレス)", GetColor(255, 255, 255));
-	DrawString(0, 30, "ゲームを終了しますか？", GetColor(255, 255, 255));
-	DrawString(0, 60, "タイトル：Ｙキー", GetColor(255, 255, 255));
-	DrawString(0, 90, "プレイを続行：Ｎキー", GetColor(255, 255, 255));
+	DrawGraph(bg_check_endless.x, bg_check_endless.y, bg_check_endless.handle, TRUE);
 	
 	if (AllKeyState[KEY_INPUT_Y] != 0)
 	{
