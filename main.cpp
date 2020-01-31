@@ -19,6 +19,12 @@
 #define GAME_SOUND_BGM_END_CLEAR	"SOUND\\bgm_end_clear.mp3"
 #define GAME_SOUND_BGM_END_OVER		"SOUND\\bgm_end_over.mp3"
 
+#define GAME_SOUND_SE_GO			"SOUND\\se_go.mp3"
+#define GAME_SOUND_SE_LEFT_RIGHT	"SOUND\\se_left_right.wav"
+#define GAME_SOUND_SE_ROTATION		"SOUND\\se_rotation.mp3"
+#define GAME_SOUND_SE_PUT			"SOUND\\se_put.mp3"
+#define GAME_SOUND_SE_DELETE		"SOUND\\se_delete.mp3"
+
 #define GAME_IMAGE_BG_TITLE				"IMAGE\\bg_title.png"
 #define GAME_IMAGE_BG_RANK				"IMAGE\\bg_rank.png"
 #define GAME_IMAGE_BG_SOUSA				"IMAGE\\bg_sousa.png"
@@ -216,6 +222,12 @@ SOUND bgm_play;
 SOUND bgm_end_clear;
 SOUND bgm_end_over;
 
+SOUND se_go;
+SOUND se_left_right;
+SOUND se_rotation;
+SOUND se_put;
+SOUND se_delete;
+
 IMAGE bg_title;
 IMAGE bg_rank;
 IMAGE bg_sousa;
@@ -278,6 +290,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MY_SOUND_LOAD(&bgm_play, GAME_SOUND_BGM_PLAY);
 	MY_SOUND_LOAD(&bgm_end_clear, GAME_SOUND_BGM_END_CLEAR);
 	MY_SOUND_LOAD(&bgm_end_over, GAME_SOUND_BGM_END_OVER);
+
+	MY_SOUND_LOAD(&se_go, GAME_SOUND_SE_GO);
+	MY_SOUND_LOAD(&se_left_right, GAME_SOUND_SE_LEFT_RIGHT);
+	MY_SOUND_LOAD(&se_rotation, GAME_SOUND_SE_ROTATION);
+	MY_SOUND_LOAD(&se_put, GAME_SOUND_SE_PUT);
+	MY_SOUND_LOAD(&se_delete, GAME_SOUND_SE_DELETE);
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
@@ -1152,6 +1170,13 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 	}
 	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
 	{
+		if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 1500)
+		{
+			if (CheckSoundMem(se_go.handle) == 0)
+			{
+				PlaySoundMem(se_go.handle, DX_PLAYTYPE_BACK);
+			}
+		}
 		DrawStringToHandle(170, 400, "Go!", GetColor(255, 255, 255), Go_fonthandle);
 	}
 	else if (syoki_count - syoki_temp >= 2000)
@@ -1233,6 +1258,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端のとき
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常条件
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -1251,6 +1277,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先で回せるかどうか
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -1275,6 +1302,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -1309,6 +1337,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RED);
@@ -1354,6 +1383,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 						{
@@ -1392,6 +1422,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//それ以外
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -1410,6 +1441,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 2] == -1))	//それ以外
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -1443,6 +1475,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RED);
@@ -1494,6 +1527,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false)
 						{
@@ -1539,6 +1573,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上端処理
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -1561,6 +1596,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move + 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -1633,6 +1669,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -1651,6 +1688,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								if (y_move < 17)
 								{
@@ -1673,6 +1711,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
 							if (y_move < 18)
@@ -1707,6 +1746,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RED);
@@ -1752,6 +1792,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*上昇処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 						{
@@ -1790,6 +1831,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							if (y_move < 18)
@@ -1808,6 +1850,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							if (y_move < 18)
@@ -1841,6 +1884,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RED);
@@ -1892,6 +1936,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*上昇処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -1937,6 +1982,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下端処理
 							(stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							if (y_move < 18)
 							{
@@ -1959,6 +2005,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move + 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							if (y_move < 18)
 							{
@@ -2035,6 +2082,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move > -1)
 							{
@@ -2052,6 +2100,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -2074,6 +2123,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -2093,6 +2143,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))		//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -2110,6 +2161,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move - 1] = -1;
@@ -2135,6 +2187,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -2160,6 +2213,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -2174,8 +2228,10 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (x_move == 9)
 						{
+							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move - 1] = -1;
@@ -2198,6 +2254,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if (y_move == -1 ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -2217,6 +2274,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move] == -1) ||	//上端処理
 							(stage_move[y_move + 1][x_move] == -1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1))		//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move > -1)
 							{
@@ -2234,6 +2292,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -2255,6 +2314,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -2289,6 +2349,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -2334,6 +2395,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 						{
@@ -2372,6 +2434,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move + 1] = -1;
@@ -2390,6 +2453,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move + 1] = -1;
@@ -2423,6 +2487,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -2475,6 +2540,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -2520,6 +2586,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -2542,6 +2609,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -2575,6 +2643,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true || stage_put_flag[y_move + 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -2620,6 +2689,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 						{
@@ -2658,6 +2728,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -2676,6 +2747,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -2709,6 +2781,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -2760,6 +2833,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -2805,6 +2879,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -2828,6 +2903,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -2900,6 +2976,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1) ||		//下端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -2915,6 +2992,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -2928,6 +3006,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1))
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -2941,6 +3020,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							y_move == 17 ||	//下端で回す場合
 							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -2956,6 +3036,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move - 1] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -2969,6 +3050,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -2988,6 +3070,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1) ||		//下端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -3003,6 +3086,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move - 1] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -3015,6 +3099,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1)	//通常・下端・下にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -3028,6 +3113,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -3042,6 +3128,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						{
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -3055,6 +3142,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たときに回す場合
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -3083,6 +3171,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 1][x_move] == true || stage_put_flag[y_move - 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -3122,6 +3211,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
@@ -3154,6 +3244,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -3169,6 +3260,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -3199,6 +3291,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -3238,6 +3331,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
 						{
@@ -3271,6 +3365,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move + 1][x_move - 1] = -1;
@@ -3287,6 +3382,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move + 1][x_move - 1] = -1;
@@ -3314,6 +3410,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -3353,6 +3450,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
@@ -3385,6 +3483,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -3400,6 +3499,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -3430,6 +3530,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(ORANGE);
@@ -3469,6 +3570,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -3502,6 +3604,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -3518,6 +3621,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -3579,6 +3683,13 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 				/*HOLD処理ここまで*/
 
+				/*回転処理(音が鳴るだけ)*/
+				if (AllKeyState[KEY_INPUT_Z] == 1 || AllKeyState[KEY_INPUT_C] == 1)
+				{
+					PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
+				}
+				/*回転処理(音が鳴るだけ)ここまで*/
+
 				/*ブロック表示処理*/
 				if (y_move > -1)	//上にはみ出たら上部は表示しない
 				{
@@ -3595,6 +3706,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*接地処理*/
 					if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
 						nextmino_rand = GetRand(MINO_KIND - 1);
 						STAGE_FLAG_CHANGE_TRUE(YELLOW);
@@ -3639,6 +3751,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*降下処理(ハードドロップ)*/
 				if (AllKeyState[KEY_INPUT_UP] == 1)
 				{
+					PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 					//一つ下が空白の間ミノを下げ続ける
 					while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
@@ -3677,6 +3790,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 						(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 					{
+						PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -3695,6 +3809,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たとき
 						(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 					{
+						PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -3741,6 +3856,13 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				}
 				/*初期化処理ここまで*/
 
+				/*回転処理(音が鳴るだけ)*/
+				if (AllKeyState[KEY_INPUT_Z] == 1 || AllKeyState[KEY_INPUT_C] == 1)
+				{
+					PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
+				}
+				/*回転処理(音が鳴るだけ)ここまで*/
+
 				/*HOLD処理*/
 				if (AllKeyState[KEY_INPUT_SPACE] == 1)
 				{
@@ -3770,6 +3892,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*接地処理*/
 					if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
 						nextmino_rand = GetRand(MINO_KIND - 1);
 						STAGE_FLAG_CHANGE_TRUE(YELLOW);
@@ -3808,6 +3931,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 				/*降下処理(ハードドロップ)*/
 				if (AllKeyState[KEY_INPUT_UP] == 1)
 				{
+					PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 					//一つ上が空白の間ミノを上げ続ける
 					while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
@@ -3840,6 +3964,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
 					{
+						PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -3855,6 +3980,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 					{
+						PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -3924,6 +4050,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -3941,6 +4068,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move - 1] = -1;
@@ -3963,6 +4091,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -3997,6 +4126,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move + 1] == true || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
@@ -4041,6 +4171,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move + 1] == false && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -4079,6 +4210,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move] = -1;
@@ -4097,6 +4229,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move] = -1;
@@ -4130,6 +4263,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
@@ -4180,6 +4314,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -4225,6 +4360,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -4247,6 +4383,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -4319,6 +4456,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -4333,6 +4471,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -4345,6 +4484,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1)	//通常・下端・下にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -4373,6 +4513,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
@@ -4411,6 +4552,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
@@ -4443,6 +4585,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -4458,6 +4601,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -4488,6 +4632,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 1][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(GREEN);
@@ -4526,6 +4671,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
 						{
@@ -4559,6 +4705,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -4575,6 +4722,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -4639,6 +4787,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move - 3][x_move] == -1 && stage_move[y_move - 2][x_move] == -1 && stage_move[y_move - 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move - 2] = -1;
 								stage_move[y_move][x_move - 1] = -1;
 								stage_move[y_move][x_move + 1] = -1;
@@ -4651,9 +4800,10 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							}
 						}
 						else if ((y_move == 0 && stage_move[y_move + 1][x_move] == -1) ||	//上端で回す場合
-							(y_move == 1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上から２番目で回す場合
-							(stage_move[y_move - 2][x_move] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))		//通常処理
+								 (y_move == 1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上から２番目で回す場合
+								 (stage_move[y_move - 2][x_move] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))		//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move][x_move - 2] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -4668,6 +4818,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 2][x_move - 1] == -1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move][x_move - 3] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 1)
 								{
 									stage_move[y_move - 2][x_move] = -1;
@@ -4696,6 +4847,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 2][x_move + 2] == -1 && stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 2] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move][x_move + 3] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 1)
 								{
 									stage_move[y_move - 2][x_move] = -1;
@@ -4724,6 +4876,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 2][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 1)
 								{
 									stage_move[y_move - 2][x_move] = -1;
@@ -4749,6 +4902,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							//下端で横状態から縦に回しすぐ横に戻すとなぜか変なとこにブロックが残るためそれを消す処理
 							if (y_move == 17)
 							{
@@ -4785,6 +4939,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 17 || stage_put_flag[y_move + 1][x_move - 2] == true || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true || stage_put_flag[y_move + 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
@@ -4823,6 +4978,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 17 && stage_put_flag[y_move + 1][x_move - 2] == false && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 						{
@@ -4854,6 +5010,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (stage_move[y_move][x_move - 3] == -1)	//通常・上端処理(上にはみ出るパターンは無し)
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move][x_move - 2] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -4868,6 +5025,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (stage_move[y_move][x_move + 2] == -1)	//通常・上端処理(上にはみ出るパターンは無し)
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move][x_move - 2] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -4898,6 +5056,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
@@ -4948,6 +5107,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -4993,6 +5153,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上から２番目のとき
 							(stage_move[y_move - 2][x_move - 1] == -1 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 1)
 							{
 								stage_move[y_move - 2][x_move] = -1;
@@ -5015,6 +5176,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上から２番目のとき
 							(stage_move[y_move - 2][x_move + 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 1)
 							{
 								stage_move[y_move - 2][x_move] = -1;
@@ -5082,6 +5244,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 2] == -1 && stage_move[y_move + 3][x_move] == -1 && stage_move[y_move + 2][x_move] == -1 && stage_move[y_move + 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move - 1] = -1;
 								stage_move[y_move][x_move + 1] = -1;
 								stage_move[y_move][x_move + 2] = -1;
@@ -5097,6 +5260,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 16 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//下から２番目で回す場合
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 2][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -5111,6 +5275,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 2][x_move - 2] == -1 && stage_move[y_move][x_move - 3] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								stage_move[y_move + 2][x_move] = -1;
@@ -5127,6 +5292,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 2][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								stage_move[y_move + 2][x_move] = -1;
@@ -5143,6 +5309,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move + 2][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1 && stage_move[y_move][x_move + 3] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								stage_move[y_move + 2][x_move] = -1;
@@ -5156,6 +5323,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1)	//通常・下端処理(下にはみ出るパターンは無し)
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							//上端で横状態から縦に回しすぐ横に戻すとなぜか変なとこにブロックが残るためそれを消す処理
 							if (y_move == 0)
 							{
@@ -5186,6 +5354,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 0 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 1][x_move] == true || stage_put_flag[y_move - 1][x_move + 1] == true || stage_put_flag[y_move - 1][x_move + 2] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
@@ -5224,6 +5393,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 0 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false && stage_put_flag[y_move - 1][x_move + 2] == false)
 						{
@@ -5255,6 +5425,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (stage_move[y_move][x_move - 2] == -1)	//通常・下端処理(下にはみ出るパターンは無し)
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
@@ -5269,6 +5440,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					{
 						if (stage_move[y_move][x_move + 3] == -1)	//通常・下端処理(下にはみ出るパターンは無し)
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move][x_move + 1] = -1;
@@ -5299,6 +5471,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
@@ -5337,6 +5510,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -5370,6 +5544,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 16 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//下から２番目のとき
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 2][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
@@ -5386,6 +5561,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 16 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//下から２番目のとき
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1 && stage_move[y_move + 2][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move] = -1;
@@ -5456,6 +5632,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move > -1)
 							{
@@ -5473,6 +5650,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -5494,6 +5672,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -5513,6 +5692,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move - 1] == -1))		//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -5530,6 +5710,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -5554,6 +5735,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、すべて条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -5579,6 +5761,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							y_move == 0 ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -5596,6 +5779,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -5618,6 +5802,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -5637,6 +5822,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上端で回す場合
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move > -1)
 							{
@@ -5654,6 +5840,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -5679,6 +5866,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -5713,6 +5901,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -5757,6 +5946,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 						{
@@ -5795,6 +5985,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -5813,6 +6004,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move + 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -5846,6 +6038,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -5896,6 +6089,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
 						{
@@ -5941,6 +6135,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -5963,6 +6158,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -5996,6 +6192,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6040,6 +6237,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 						{
@@ -6078,6 +6276,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -6096,6 +6295,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -6129,6 +6329,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6179,6 +6380,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -6224,6 +6426,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -6246,6 +6449,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -6318,6 +6522,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1) ||	//下端で回す場合
 							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -6332,6 +6537,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
 								rotation = 180;
@@ -6344,6 +6550,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -6357,6 +6564,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -6371,6 +6579,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move - 1] = -1;
 								--x_move;
@@ -6384,6 +6593,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if (y_move == 18 ||	//下にはみ出たとき
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -6403,6 +6613,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1) ||	//下端で回す場合
 							(stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -6417,6 +6628,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move - 1] = -1;
 								stage_move[y_move + 1][x_move - 1] = -1;
 								--x_move;
@@ -6430,6 +6642,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -6443,6 +6656,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -6457,6 +6671,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -6470,6 +6685,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たときに回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -6498,6 +6714,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 1][x_move] == true || stage_put_flag[y_move - 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6536,6 +6753,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 						{
@@ -6568,6 +6786,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -6583,6 +6802,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -6613,6 +6833,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6651,6 +6872,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -6684,6 +6906,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -6700,6 +6923,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -6727,6 +6951,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6765,6 +6990,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
@@ -6797,6 +7023,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -6812,6 +7039,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -6842,6 +7070,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(BLUE);
@@ -6880,6 +7109,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -6913,6 +7143,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move - 1] = -1;
@@ -6929,6 +7160,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move] = -1;
 							stage_move[y_move + 1][x_move - 1] = -1;
@@ -6999,6 +7231,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move - 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move < -1)
 							{
@@ -7016,6 +7249,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -7039,6 +7273,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if (y_move == -1 ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -7058,6 +7293,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -7075,6 +7311,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move + 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move - 1] = -1;
@@ -7099,6 +7336,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move + 1][x_move] == -1 && stage_move[y_move + 1][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -7124,6 +7362,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							if (y_move > -1)
 							{
@@ -7141,6 +7380,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move - 1] = -1;
@@ -7162,6 +7402,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							if (y_move > 0)
 							{
@@ -7181,6 +7422,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							y_move == 0 ||	//上端処理
 							stage_move[y_move - 1][x_move] == -1)	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							if (y_move > -1)
 							{
@@ -7198,6 +7440,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								if (y_move > 0)
 								{
 									stage_move[y_move - 1][x_move] = -1;
@@ -7222,6 +7465,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1)	//通常・上端・上にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							if (y_move > 0)
 							{
@@ -7256,6 +7500,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -7300,6 +7545,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 						{
@@ -7338,6 +7584,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move] = -1;
@@ -7356,6 +7603,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 2] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 2] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move] = -1;
@@ -7389,6 +7637,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 2][x_move - 1] == true || stage_put_flag[y_move + 1][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -7439,6 +7688,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false)
 						{
@@ -7484,6 +7734,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -7506,6 +7757,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move - 1] = -1;
@@ -7539,6 +7791,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true || stage_put_flag[y_move + 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -7583,6 +7836,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 						{
@@ -7621,6 +7875,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -7639,6 +7894,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上にはみ出たとき
 							(stage_move[y_move][x_move + 2] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常・上端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > -1)
 							{
 								stage_move[y_move][x_move - 1] = -1;
@@ -7672,6 +7928,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 16 || stage_put_flag[y_move + 1][x_move - 1] == true || stage_put_flag[y_move + 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -7722,6 +7979,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ下が空白の間ミノを下げ続ける
 						while (y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 						{
@@ -7767,6 +8025,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -7789,6 +8048,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 0 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1) ||	//上端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							if (y_move > 0)
 							{
 								stage_move[y_move - 1][x_move] = -1;
@@ -7861,6 +8121,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							y_move == 17 ||	//下端で回す場合
 							(stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -7875,6 +8136,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -7887,6 +8149,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move - 1][x_move + 1] == -1)	//通常・下端・下にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -7900,6 +8163,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -7914,6 +8178,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move + 1][x_move - 1] = -1;
 								--x_move;
 								rotation = 0;
@@ -7926,6 +8191,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -7945,6 +8211,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 90;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -7959,6 +8226,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1 && stage_move[y_move - 1][x_move] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move][x_move] = -1;
 								stage_move[y_move + 1][x_move - 1] = -1;
 								--x_move;
@@ -7971,6 +8239,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						}
 						else if (stage_move[y_move - 1][x_move] == -1 && stage_move[y_move - 1][x_move + 1] == -1)	//通常・下端・下にはみ出たとき、全て条件は同じ
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 180;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -7984,6 +8253,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move][x_move - 1] == -1) ||	//下端で回す場合
 							(stage_move[y_move][x_move - 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 270;
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
@@ -7998,6 +8268,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							//移動先にブロックが無ければ
 							if (stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1)
 							{
+								PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 								stage_move[y_move - 1][x_move] = -1;
 								stage_move[y_move + 1][x_move] = -1;
 								--x_move;
@@ -8011,6 +8282,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						else if (y_move == 18 ||	//上にはみ出たときに回す場合
 							(stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_rotation.handle, DX_PLAYTYPE_BACK);
 							rotation = 0;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
@@ -8039,6 +8311,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 1][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -8077,6 +8350,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 						{
@@ -8109,6 +8383,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -8124,6 +8399,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -8154,6 +8430,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 1][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -8192,6 +8469,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
 						{
@@ -8225,6 +8503,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -8241,6 +8520,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -8268,6 +8548,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 2][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true || stage_put_flag[y_move - 2][x_move + 1] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -8306,6 +8587,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 						{
@@ -8338,6 +8620,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -8353,6 +8636,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 							(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move + 1] == -1))	//通常・下端処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move - 1] = -1;
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move - 1][x_move + 1] = -1;
@@ -8383,6 +8667,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 						/*接地処理*/
 						if (y_move == 1 || stage_put_flag[y_move - 1][x_move - 1] == true || stage_put_flag[y_move - 2][x_move] == true)
 						{
+							PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 							mino_rand = nextmino_rand;
 							nextmino_rand = GetRand(MINO_KIND - 1);
 							STAGE_FLAG_CHANGE_TRUE(PURPLE);
@@ -8421,6 +8706,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 					/*降下処理(ハードドロップ)*/
 					if (AllKeyState[KEY_INPUT_UP] == 1)
 					{
+						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						//一つ上が空白の間ミノを上げ続ける
 						while (y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 						{
@@ -8454,6 +8740,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move - 1] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
@@ -8470,6 +8757,7 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 							(y_move == 17 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1) ||	//下端処理
 							(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 1] == -1 && stage_move[y_move + 1][x_move + 1] == -1))	//通常処理
 						{
+							PlaySoundMem(se_left_right.handle, DX_PLAYTYPE_BACK);
 							stage_move[y_move - 1][x_move] = -1;
 							stage_move[y_move][x_move - 1] = -1;
 							stage_move[y_move][x_move] = -1;
