@@ -23,7 +23,7 @@
 #define GAME_SOUND_SE_LEFT_RIGHT	"SOUND\\se_left_right.wav"
 #define GAME_SOUND_SE_ROTATION		"SOUND\\se_rotation.mp3"
 #define GAME_SOUND_SE_PUT			"SOUND\\se_put.mp3"
-#define GAME_SOUND_SE_DELETE		"SOUND\\se_delete.mp3"
+#define GAME_SOUND_SE_SOFT			"SOUND\\se_soft.mp3"
 
 #define GAME_IMAGE_BG_TITLE				"IMAGE\\bg_title.png"
 #define GAME_IMAGE_BG_RANK				"IMAGE\\bg_rank.png"
@@ -234,7 +234,7 @@ SOUND se_go;
 SOUND se_left_right;
 SOUND se_rotation;
 SOUND se_put;
-SOUND se_delete;
+SOUND se_soft;
 
 IMAGE bg_title;
 IMAGE bg_rank;
@@ -304,7 +304,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MY_SOUND_LOAD(&se_left_right, GAME_SOUND_SE_LEFT_RIGHT);
 	MY_SOUND_LOAD(&se_rotation, GAME_SOUND_SE_ROTATION);
 	MY_SOUND_LOAD(&se_put, GAME_SOUND_SE_PUT);
-	MY_SOUND_LOAD(&se_delete, GAME_SOUND_SE_DELETE);
+	MY_SOUND_LOAD(&se_soft, GAME_SOUND_SE_SOFT);
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
@@ -1293,6 +1293,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
@@ -1434,6 +1435,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
@@ -1702,6 +1704,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
@@ -1843,6 +1846,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move] = -1;
 						if (y_move < 18)
@@ -2305,6 +2309,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
@@ -2447,6 +2452,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
@@ -2594,11 +2600,12 @@ VOID MINO_OPERATION(VOID)
 				}
 				/*降下処理(定期)ここまで*/
 
-					/*降下処理(ソフトドロップ)*/
+				/*降下処理(ソフトドロップ)*/
 				if (timer > drop_tmp)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
@@ -2740,6 +2747,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
@@ -3124,6 +3132,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move + 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -3244,6 +3253,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -3363,6 +3373,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
@@ -3483,6 +3494,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
@@ -3662,6 +3674,7 @@ VOID MINO_OPERATION(VOID)
 			{
 				if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 				{
+					PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 					if (y_move > -1)
 					{
 						stage_move[y_move][x_move - 1] = -1;
@@ -3845,6 +3858,7 @@ VOID MINO_OPERATION(VOID)
 			{
 				if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 				{
+					PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 					stage_move[y_move - 1][x_move - 1] = -1;
 					stage_move[y_move - 1][x_move] = -1;
 					stage_move[y_move][x_move - 1] = -1;
@@ -4082,6 +4096,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move + 1] == false && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move] = -1;
@@ -4222,6 +4237,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -4466,6 +4482,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move - 1][x_move + 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -4585,6 +4602,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -4892,6 +4910,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 17 && stage_put_flag[y_move + 1][x_move - 2] == false && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move][x_move - 2] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -5015,6 +5034,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 1)
 						{
 							stage_move[y_move - 2][x_move] = -1;
@@ -5307,6 +5327,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 0 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false && stage_put_flag[y_move - 1][x_move + 2] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
 						stage_move[y_move][x_move + 1] = -1;
@@ -5424,6 +5445,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move] = -1;
 						stage_move[y_move + 1][x_move] = -1;
@@ -5857,6 +5879,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -5997,6 +6020,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -6148,6 +6172,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -6288,6 +6313,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move] = -1;
@@ -6667,6 +6693,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -6786,6 +6813,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
@@ -6904,6 +6932,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move - 1][x_move + 1] = -1;
@@ -7023,6 +7052,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move] = -1;
 						stage_move[y_move + 1][x_move - 1] = -1;
@@ -7456,6 +7486,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move] = -1;
@@ -7596,6 +7627,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -7747,6 +7779,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -7887,6 +7920,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move] = -1;
@@ -8264,6 +8298,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -8383,6 +8418,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -8501,6 +8537,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move - 1][x_move + 1] = -1;
@@ -8620,6 +8657,7 @@ VOID MINO_OPERATION(VOID)
 				{
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
+						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -8698,6 +8736,7 @@ VOID MINO_OPERATION(VOID)
 
 		break;
 	}
+	return;
 }
 
 VOID MY_GAME_PLAY_ENDLESS(VOID)
