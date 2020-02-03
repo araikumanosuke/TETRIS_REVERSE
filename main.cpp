@@ -399,6 +399,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DeleteSoundMem(bgm_end_clear.handle);
 	DeleteSoundMem(bgm_end_over.handle);
 
+	DeleteSoundMem(se_go.handle);
+	DeleteSoundMem(se_left_right.handle);
+	DeleteSoundMem(se_rotation.handle);
+	DeleteSoundMem(se_put.handle);
+	DeleteSoundMem(se_soft.handle);
+	DeleteSoundMem(se_hold.handle);
+
 	DeleteFontToHandle(ready_fonthandle);
 	DeleteFontToHandle(Go_fonthandle);
 	DeleteFontToHandle(score_fonthandle);
@@ -1083,11 +1090,11 @@ VOID MY_GAME_RANKING(VOID)
 	/*スコアランキング表示ここまで*/
 
 	/*消去ライン表示*/
-	DrawFormatStringToHandle(390, 146, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No1);
-	DrawFormatStringToHandle(390, 184, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No2);
-	DrawFormatStringToHandle(390, 222, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No3);
-	DrawFormatStringToHandle(390, 260, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No4);
-	DrawFormatStringToHandle(390, 298, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No5);
+	DrawFormatStringToHandle(370, 146, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No1);
+	DrawFormatStringToHandle(370, 184, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No2);
+	DrawFormatStringToHandle(370, 222, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No3);
+	DrawFormatStringToHandle(370, 260, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No4);
+	DrawFormatStringToHandle(370, 298, GetColor(0, 0, 0), rank_fonthandle, "%3d", deleteline_No5);
 	/*消去ライン表示ここまで*/
 
 	/*タイムランキング表示*/
