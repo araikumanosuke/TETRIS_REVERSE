@@ -1787,7 +1787,7 @@ VOID MINO_OPERATION(VOID)
 				/*左移動処理ここまで*/
 
 				/*右移動処理*/
-				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1)
+				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move + 1] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move + 1] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
@@ -6777,7 +6777,7 @@ VOID MINO_OPERATION(VOID)
 				/*降下処理(ハードドロップ)ここまで*/
 
 				/*左移動処理*/
-				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1)
+				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1))	//通常・下端処理
@@ -6793,7 +6793,7 @@ VOID MINO_OPERATION(VOID)
 				/*左移動処理ここまで*/
 
 				/*右移動処理*/
-				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 2] == -1)
+				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
@@ -6897,7 +6897,7 @@ VOID MINO_OPERATION(VOID)
 				/*降下処理(ハードドロップ)ここまで*/
 
 				/*左移動処理*/
-				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1 && stage_move[y_move + 1][x_move - 2] == -1)
+				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 						(y_move == 17 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move - 2] == -1) ||	//下端処理
@@ -7016,7 +7016,7 @@ VOID MINO_OPERATION(VOID)
 				/*降下処理(ハードドロップ)ここまで*/
 
 				/*左移動処理*/
-				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2 && stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1)
+				if (AllKeyState[KEY_INPUT_LEFT] == 1 && x_move >= 2)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move - 2] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move - 2] == -1 && stage_move[y_move][x_move] == -1))	//通常・下端処理
@@ -7032,7 +7032,7 @@ VOID MINO_OPERATION(VOID)
 				/*左移動処理ここまで*/
 
 				/*右移動処理*/
-				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7 && stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move + 2] == -1)
+				if (AllKeyState[KEY_INPUT_RIGHT] == 1 && x_move <= 7)
 				{
 					if ((y_move == 18 && stage_move[y_move - 1][x_move + 2] == -1) ||	//下にはみ出たとき
 						(stage_move[y_move - 1][x_move + 2] == -1 && stage_move[y_move][x_move + 2] == -1))	//通常・下端処理
