@@ -90,8 +90,7 @@ struct IMAGE {
 
 struct TIME {
 	int min;	//分
-	int sec;	//秒
-	int m_sec;	//ミリ秒
+	double sec;	//秒
 };
 
 BOOL IsWM_CREATE = FALSE;	//WM_CREATEが正常に動作したか判断する
@@ -146,11 +145,11 @@ static int deleteline_No3 = 0;
 static int deleteline_No4 = 0;
 static int deleteline_No5 = 0;
 
-static TIME time_No1 = { 99,59,59 };
-static TIME time_No2 = { 99,59,59 };
-static TIME time_No3 = { 99,59,59 };
-static TIME time_No4 = { 99,59,59 };
-static TIME time_No5 = { 99,59,59 };
+static TIME time_No1 = { 99,59.99 };
+static TIME time_No2 = { 99,59.99 };
+static TIME time_No3 = { 99,59.99 };
+static TIME time_No4 = { 99,59.99 };
+static TIME time_No5 = { 99,59.99 };
 /*ランキングで使う変数ここまで*/
 
 bool reverse_flag;
@@ -159,7 +158,7 @@ bool first_flag;
 
 int mode_flag;
 
-bool m_sec_flag;
+bool sec_flag;
 
 int ready_fonthandle;
 int Go_fonthandle;
@@ -930,84 +929,79 @@ VOID RANKING_UPDATE(VOID)
 	else if (mode_flag == TIMEATTACK)
 	{
 		if ((time_No1.min > time.min)||	//分
-			(time_No1.min == time.min && time_No1.sec > time.sec)||	//秒
-			(time_No1.min == time.min && time_No1.sec == time.sec && time_No1.m_sec > time.m_sec))	//ミリ秒
+			(time_No1.min == time.min && time_No1.sec > time.sec))	//ミリ秒
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			time_No5.m_sec = time_No4.m_sec;
+			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			time_No4.m_sec = time_No3.m_sec;
+			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time_No2.min;
 			time_No3.sec = time_No2.sec;
-			time_No3.m_sec = time_No2.m_sec;
+			//time_No3.m_sec = time_No2.m_sec;
 
 			time_No2.min = time_No1.min;
 			time_No2.sec = time_No1.sec;
-			time_No2.m_sec = time_No1.m_sec;
+			//time_No2.m_sec = time_No1.m_sec;
 
 			time_No1.min = time.min;
 			time_No1.sec = time.sec;
-			time_No1.m_sec = time.m_sec;
+			//time_No1.m_sec = time.m_sec;
 		}
 		else if ((time_No2.min > time.min) ||	//分
-				 (time_No2.min == time.min && time_No2.sec > time.sec) ||	//秒
-				 (time_No2.min == time.min && time_No2.sec == time.sec && time_No2.m_sec > time.m_sec))	//ミリ秒
+				 (time_No2.min == time.min && time_No2.sec > time.sec))	//ミリ秒
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			time_No5.m_sec = time_No4.m_sec;
+			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			time_No4.m_sec = time_No3.m_sec;
+			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time_No2.min;
 			time_No3.sec = time_No2.sec;
-			time_No3.m_sec = time_No2.m_sec;
+			//time_No3.m_sec = time_No2.m_sec;
 
 			time_No2.min = time.min;
 			time_No2.sec = time.sec;
-			time_No2.m_sec = time.m_sec;
+			//time_No2.m_sec = time.m_sec;
 		}
 		else if ((time_No3.min > time.min) ||	//分
-				 (time_No3.min == time.min && time_No3.sec > time.sec) ||	//秒
-				 (time_No3.min == time.min && time_No3.sec == time.sec && time_No3.m_sec > time.m_sec))	//ミリ秒
+				 (time_No3.min == time.min && time_No3.sec > time.sec))	//ミリ秒
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			time_No5.m_sec = time_No4.m_sec;
+			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			time_No4.m_sec = time_No3.m_sec;
+			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time.min;
 			time_No3.sec = time.sec;
-			time_No3.m_sec = time.m_sec;
+			//time_No3.m_sec = time.m_sec;
 		}
 		else if ((time_No4.min > time.min) ||	//分
-				 (time_No4.min == time.min && time_No4.sec > time.sec) ||	//秒
-				 (time_No4.min == time.min && time_No4.sec == time.sec && time_No4.m_sec > time.m_sec))	//ミリ秒
+				 (time_No4.min == time.min && time_No4.sec > time.sec))	//ミリ秒
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			time_No5.m_sec = time_No4.m_sec;
+			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time.min;
 			time_No4.sec = time.sec;
-			time_No4.m_sec = time.m_sec;
+			//time_No4.m_sec = time.m_sec;
 		}
 		else if ((time_No4.min > time.min) ||	//分
-				 (time_No4.min == time.min && time_No4.sec > time.sec) ||	//秒
-				 (time_No4.min == time.min && time_No4.sec == time.sec && time_No4.m_sec > time.m_sec))	//ミリ秒
+				 (time_No4.min == time.min && time_No4.sec > time.sec))	//ミリ秒
 		{
 			time_No5.min = time.min;
 			time_No5.sec = time.sec;
-			time_No5.m_sec = time.m_sec;
+			//time_No5.m_sec = time.m_sec;
 		}
 	}
 	
@@ -1045,7 +1039,7 @@ VOID MY_GAME_TITLE(VOID)
 
 	reverse_flag = false;
 
-	m_sec_flag = true;
+	sec_flag = true;
 
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
@@ -1097,11 +1091,11 @@ VOID MY_GAME_RANKING(VOID)
 	/*消去ライン表示ここまで*/
 
 	/*タイムランキング表示*/
-	DrawFormatStringToHandle(190, 413, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", time_No1.min, time_No1.sec, time_No1.m_sec);
-	DrawFormatStringToHandle(190, 451, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", time_No2.min, time_No2.sec, time_No2.m_sec);
-	DrawFormatStringToHandle(190, 489, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", time_No3.min, time_No3.sec, time_No3.m_sec);
-	DrawFormatStringToHandle(190, 527, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", time_No4.min, time_No4.sec, time_No4.m_sec);
-	DrawFormatStringToHandle(190, 565, GetColor(0, 0, 0), rank_fonthandle, "%02d : %02d . %02d", time_No5.min, time_No5.sec, time_No5.m_sec);
+	DrawFormatStringToHandle(210, 413, GetColor(0, 0, 0), rank_fonthandle, "%02d:%05.2lf", time_No1.min, time_No1.sec);
+	DrawFormatStringToHandle(210, 451, GetColor(0, 0, 0), rank_fonthandle, "%02d:%05.2lf", time_No2.min, time_No2.sec);
+	DrawFormatStringToHandle(210, 489, GetColor(0, 0, 0), rank_fonthandle, "%02d:%05.2lf", time_No3.min, time_No3.sec);
+	DrawFormatStringToHandle(210, 527, GetColor(0, 0, 0), rank_fonthandle, "%02d:%05.2lf", time_No4.min, time_No4.sec);
+	DrawFormatStringToHandle(210, 565, GetColor(0, 0, 0), rank_fonthandle, "%02d:%05.2lf", time_No5.min, time_No5.sec);
 	/*タイムランキング表示ここまで*/
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
@@ -1142,7 +1136,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -1555,7 +1552,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -1970,7 +1970,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -2868,7 +2871,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -3588,7 +3594,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -3775,7 +3784,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -3948,7 +3960,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -4356,7 +4371,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -4695,7 +4713,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][3] == true || stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -5153,7 +5174,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true || stage_put_flag[17][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -5538,7 +5562,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -6432,7 +6459,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -7145,7 +7175,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[0][4] == true || stage_put_flag[0][5] == true || stage_put_flag[0][6] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -8039,7 +8072,10 @@ VOID MINO_OPERATION(VOID)
 				if (stage_put_flag[17][3] == true || stage_put_flag[17][4] == true || stage_put_flag[17][5] == true)
 				{
 					/*ランキング更新処理*/
-					RANKING_UPDATE();
+					if (mode_flag == ENDLESS)
+					{
+						RANKING_UPDATE();
+					}
 					/*ランキング更新処理ここまで*/
 
 					StopSoundMem(bgm_play.handle);
@@ -9102,11 +9138,11 @@ VOID MY_GAME_PLAY_TIME(VOID)
 	DrawFormatStringToHandle(444, 320, GetColor(0, 0, 255), line_fonthandle, "%3d", clearline);
 
 	//タイム
-	DrawFormatStringToHandle(230, 25, GetColor(255, 255, 255), score_fonthandle, "%02d:%02d.%02d", time.min, time.sec, time.m_sec);
+	DrawFormatStringToHandle(230, 25, GetColor(255, 255, 255), score_fonthandle, "%02d:%05.2lf", time.min, time.sec);
 
 	static int syoki_temp;
 
-	static int m_sec_tmp;
+	static double sec_tmp;
 
 	int syoki_count = GetNowCount();
 
@@ -9148,30 +9184,21 @@ VOID MY_GAME_PLAY_TIME(VOID)
 
 		timer = GetNowCount();
 
-		if (m_sec_flag == true)
+		if (sec_flag == true)
 		{
-			m_sec_tmp = timer + 1;
-			m_sec_flag = false;
+			sec_tmp = (double)timer;
+			sec_flag = false;
 		}
 		if (CheckSoundMem(bgm_play.handle) == 0)
 		{
 			PlaySoundMem(bgm_play.handle, DX_PLAYTYPE_LOOP);
 		}
 
-		if (timer > m_sec_tmp)
-		{
-			++time.m_sec;
-			++m_sec_tmp;
-		}
-		if (time.m_sec >= 60)
-		{
-			++time.sec;
-			time.m_sec = 0;
-		}
+		time.sec = ((double)timer - sec_tmp) / 1000;
 		if (time.sec >= 60)
 		{
 			++time.min;
-			time.sec = 0;
+			sec_tmp = (double)timer;
 		}
 
 		//操作するミノ
