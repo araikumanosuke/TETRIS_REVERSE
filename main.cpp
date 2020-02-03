@@ -24,6 +24,7 @@
 #define GAME_SOUND_SE_ROTATION		"SOUND\\se_rotation.mp3"
 #define GAME_SOUND_SE_PUT			"SOUND\\se_put.mp3"
 #define GAME_SOUND_SE_SOFT			"SOUND\\se_soft.mp3"
+#define GAME_SOUND_SE_HOLD			"SOUND\\se_hold.mp3"
 
 #define GAME_IMAGE_BG_TITLE				"IMAGE\\bg_title.png"
 #define GAME_IMAGE_BG_RANK				"IMAGE\\bg_rank.png"
@@ -235,6 +236,7 @@ SOUND se_left_right;
 SOUND se_rotation;
 SOUND se_put;
 SOUND se_soft;
+SOUND se_hold;
 
 IMAGE bg_title;
 IMAGE bg_rank;
@@ -305,6 +307,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MY_SOUND_LOAD(&se_rotation, GAME_SOUND_SE_ROTATION);
 	MY_SOUND_LOAD(&se_put, GAME_SOUND_SE_PUT);
 	MY_SOUND_LOAD(&se_soft, GAME_SOUND_SE_SOFT);
+	MY_SOUND_LOAD(&se_hold, GAME_SOUND_SE_HOLD);
 
 	MY_IMAGE_LOAD(&bg_title, 0, 0, GAME_IMAGE_BG_TITLE);
 	MY_IMAGE_LOAD(&bg_rank, 0, 0, GAME_IMAGE_BG_RANK);
@@ -544,6 +547,7 @@ bool HOLD(VOID)
 	{
 		if (firsthold_flag == true)
 		{
+			PlaySoundMem(se_hold.handle, DX_PLAYTYPE_BACK);
 			INIT_STAGE_ONLY_MOVE();
 			holdmino = mino_rand;
 			mino_rand = nextmino_rand;
@@ -555,6 +559,7 @@ bool HOLD(VOID)
 		}
 		else
 		{
+			PlaySoundMem(se_hold.handle, DX_PLAYTYPE_BACK);
 			INIT_STAGE_ONLY_MOVE();
 			hold_taihi = holdmino;
 			holdmino = mino_rand;
