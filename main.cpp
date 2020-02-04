@@ -832,6 +832,7 @@ VOID DELETE_MOVE_LINE(VOID)
 			StopSoundMem(bgm_play.handle);
 			RANKING_UPDATE();
 			GameSceneNow = (int)GAME_SCENE_END_CLEAR;
+			return;
 		}
 	}
 	reverseline -= deletecount;
@@ -936,79 +937,64 @@ VOID RANKING_UPDATE(VOID)
 	else if (mode_flag == TIMEATTACK)
 	{
 		if ((time_No1.min > time.min)||	//ï™
-			(time_No1.min == time.min && time_No1.sec > time.sec))	//É~Éäïb
+			(time_No1.min == time.min && time_No1.sec > time.sec))	//ïb
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time_No2.min;
 			time_No3.sec = time_No2.sec;
-			//time_No3.m_sec = time_No2.m_sec;
 
 			time_No2.min = time_No1.min;
 			time_No2.sec = time_No1.sec;
-			//time_No2.m_sec = time_No1.m_sec;
 
 			time_No1.min = time.min;
 			time_No1.sec = time.sec;
-			//time_No1.m_sec = time.m_sec;
 		}
 		else if ((time_No2.min > time.min) ||	//ï™
-				 (time_No2.min == time.min && time_No2.sec > time.sec))	//É~Éäïb
+				 (time_No2.min == time.min && time_No2.sec > time.sec))	//ïb
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time_No2.min;
 			time_No3.sec = time_No2.sec;
-			//time_No3.m_sec = time_No2.m_sec;
 
 			time_No2.min = time.min;
 			time_No2.sec = time.sec;
-			//time_No2.m_sec = time.m_sec;
 		}
 		else if ((time_No3.min > time.min) ||	//ï™
-				 (time_No3.min == time.min && time_No3.sec > time.sec))	//É~Éäïb
+				 (time_No3.min == time.min && time_No3.sec > time.sec))	//ïb
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time_No3.min;
 			time_No4.sec = time_No3.sec;
-			//time_No4.m_sec = time_No3.m_sec;
 
 			time_No3.min = time.min;
 			time_No3.sec = time.sec;
-			//time_No3.m_sec = time.m_sec;
 		}
 		else if ((time_No4.min > time.min) ||	//ï™
-				 (time_No4.min == time.min && time_No4.sec > time.sec))	//É~Éäïb
+				 (time_No4.min == time.min && time_No4.sec > time.sec))	//ïb
 		{
 			time_No5.min = time_No4.min;
 			time_No5.sec = time_No4.sec;
-			//time_No5.m_sec = time_No4.m_sec;
 
 			time_No4.min = time.min;
 			time_No4.sec = time.sec;
-			//time_No4.m_sec = time.m_sec;
 		}
 		else if ((time_No4.min > time.min) ||	//ï™
-				 (time_No4.min == time.min && time_No4.sec > time.sec))	//É~Éäïb
+				 (time_No4.min == time.min && time_No4.sec > time.sec))	//ïb
 		{
 			time_No5.min = time.min;
 			time_No5.sec = time.sec;
-			//time_No5.m_sec = time.m_sec;
 		}
 	}
 	
@@ -1028,7 +1014,6 @@ VOID MY_GAME_TITLE(VOID)
 
 	syoki_flag = 0;
 
-	//ground_flag = false;		//ê⁄ínÇµÇΩÇ©
 	firsthold_flag = true;		//ç≈èâÇÃHOLDÇ©Ç«Ç§Ç©
 	holdfinish_flag = false;	//ê⁄ínÇ∑ÇÈëOÇ…HOLDÇ™àÍìxçœÇÒÇ≈Ç¢ÇÈÇ©
 
@@ -1036,7 +1021,7 @@ VOID MY_GAME_TITLE(VOID)
 
 	deleteline = 0;
 	reverseline = 40;
-	clearline = 200;
+	clearline = 40;
 	score = 0;
 	time = { 0 };
 
@@ -1178,8 +1163,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -1279,8 +1262,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -1303,7 +1284,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 1][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -1346,8 +1326,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -1418,8 +1396,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -1445,7 +1421,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move] = -1;
@@ -1497,8 +1472,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -1594,8 +1567,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -1693,8 +1664,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -1717,7 +1686,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 1][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						if (y_move < 18)
@@ -1760,8 +1728,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -1832,8 +1798,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -1859,7 +1823,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move] = -1;
 						if (y_move < 18)
 						{
@@ -1911,8 +1874,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -2012,8 +1973,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -2301,8 +2260,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2325,7 +2282,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false && stage_put_flag[y_move + 2][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move + 1] = -1;
@@ -2368,8 +2324,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -2440,8 +2394,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2468,7 +2420,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -2520,8 +2471,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -2597,8 +2546,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2621,7 +2568,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move + 2][x_move - 1] == false && stage_put_flag[y_move + 1][x_move] == false && stage_put_flag[y_move + 1][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > -1)
 						{
 							stage_move[y_move][x_move - 1] = -1;
@@ -2664,8 +2610,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -2736,8 +2680,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -2763,7 +2705,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move < 16 && stage_put_flag[y_move][x_move - 1] == false && stage_put_flag[y_move + 2][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						if (y_move > 0)
 						{
 							stage_move[y_move - 1][x_move - 1] = -1;
@@ -2815,8 +2756,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -2913,8 +2852,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -3130,8 +3067,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -3151,7 +3086,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 1][x_move - 1] == false && stage_put_flag[y_move - 1][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move + 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -3185,8 +3119,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3251,8 +3183,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -3272,7 +3202,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move][x_move - 1] = -1;
 						stage_move[y_move + 1][x_move - 1] = -1;
@@ -3306,8 +3235,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3371,8 +3298,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -3392,7 +3317,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false && stage_put_flag[y_move - 2][x_move + 1] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move - 1][x_move + 1] = -1;
@@ -3426,8 +3350,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3492,8 +3414,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -3513,7 +3433,6 @@ VOID MINO_OPERATION(VOID)
 					if (AllKeyState[KEY_INPUT_DOWN] != 0 && y_move > 1 && stage_put_flag[y_move - 2][x_move - 1] == false && stage_put_flag[y_move - 2][x_move] == false)
 					{
 						PlaySoundMem(se_soft.handle, DX_PLAYTYPE_BACK);
-						/*tmp += 1000;*/
 						stage_move[y_move - 1][x_move - 1] = -1;
 						stage_move[y_move - 1][x_move] = -1;
 						stage_move[y_move][x_move] = -1;
@@ -3547,8 +3466,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3636,8 +3553,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -3672,8 +3587,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(YELLOW);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3738,8 +3651,6 @@ VOID MINO_OPERATION(VOID)
 				STAGE_FLAG_CHANGE_TRUE(YELLOW);
 				holdfinish_flag = false;
 				first_flag = true;
-				/*tmp = 0;
-				drop_tmp = 0;*/
 				DELETE_MOVE_LINE();
 				break;
 			}
@@ -3833,8 +3744,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -3862,8 +3771,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(YELLOW);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -3916,8 +3823,6 @@ VOID MINO_OPERATION(VOID)
 				STAGE_FLAG_CHANGE_TRUE(YELLOW);
 				holdfinish_flag = false;
 				first_flag = true;
-				/*tmp = 0;
-				drop_tmp = 0;*/
 				DELETE_MOVE_LINE();
 				break;
 			}
@@ -4002,8 +3907,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -4100,8 +4003,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -4166,8 +4067,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -4238,8 +4137,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -4316,8 +4213,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -4413,8 +4308,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -4492,8 +4385,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -4546,8 +4437,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -4612,8 +4501,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -4666,8 +4553,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -4748,8 +4633,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -4923,8 +4806,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -4977,8 +4858,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -5041,8 +4920,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -5119,8 +4996,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -5209,8 +5084,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -5343,8 +5216,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -5397,8 +5268,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -5461,8 +5330,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -5515,8 +5382,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -5604,8 +5469,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -5895,8 +5758,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -5961,8 +5822,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -6033,8 +5892,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -6111,8 +5968,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -6188,8 +6043,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -6254,8 +6107,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -6326,8 +6177,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -6404,8 +6253,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -6501,8 +6348,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -6769,8 +6614,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -6889,8 +6732,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7008,8 +6849,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7128,8 +6967,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7217,8 +7054,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -7508,8 +7343,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -7574,8 +7407,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7646,8 +7477,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -7724,8 +7553,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7801,8 +7628,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -7867,8 +7692,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -7939,8 +7762,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -8017,8 +7838,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -8114,8 +7933,6 @@ VOID MINO_OPERATION(VOID)
 				if (HOLD())
 				{
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					break;
 				}
 			}
@@ -8326,8 +8143,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -8380,8 +8195,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -8446,8 +8259,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -8500,8 +8311,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -8565,8 +8374,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -8619,8 +8426,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
@@ -8685,8 +8490,6 @@ VOID MINO_OPERATION(VOID)
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
-						/*tmp = 0;
-						drop_tmp = 0;*/
 						DELETE_MOVE_LINE();
 						break;
 					}
@@ -8739,8 +8542,6 @@ VOID MINO_OPERATION(VOID)
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
-					/*tmp = 0;
-					drop_tmp = 0;*/
 					DELETE_MOVE_LINE();
 					break;
 				}
