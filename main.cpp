@@ -1025,7 +1025,7 @@ VOID MY_GAME_TITLE(VOID)
 
 	deleteline = 0;
 	reverseline = 40;
-	clearline = 40;
+	clearline = 80;
 	score = 0;
 	time = { 0 };
 
