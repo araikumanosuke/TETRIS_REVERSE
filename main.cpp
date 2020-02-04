@@ -132,6 +132,10 @@ int y_move;
 int drop_tmp;
 int rotation;
 
+double sec_tmp;
+
+double stop;
+
 /*ƒ‰ƒ“ƒLƒ“ƒO‚Åg‚¤•Ï”*/
 static int score_No1 = 0;
 static int score_No2 = 0;
@@ -8950,8 +8954,6 @@ VOID MY_GAME_PLAY_TIME(VOID)
 
 	static int syoki_temp;
 
-	static double sec_tmp;
-
 	int syoki_count = GetNowCount();
 
 	if (syoki_flag == 0)
@@ -9275,6 +9277,7 @@ VOID MY_GAME_PLAY_TIME(VOID)
 
 	if (AllKeyState[KEY_INPUT_BACK] != 0)
 	{
+		stop = (double)timer;
 		GameSceneNow = (int)GAME_SCENE_CHECK_TIME;
 	}
 
@@ -9317,6 +9320,7 @@ VOID MY_GAME_CHECK_TIME(VOID)
 	else if (AllKeyState[KEY_INPUT_N] != 0)
 	{
 		tmp = stop_timer + 1000;	//‚P•b•ª‘«‚µ‚Ätmp‚É‘ã“ü
+		sec_tmp += (double)stop_timer - stop;
 		GameSceneNow = (int)GAME_SCENE_PLAY_TIME;
 	}
 
