@@ -164,6 +164,14 @@ int mode_flag;
 
 bool sec_flag;
 
+bool randfinish_red;
+bool randfinish_orange;
+bool randfinish_yellow;
+bool randfinish_green;
+bool randfinish_rightblue;
+bool randfinish_blue;
+bool randfinish_purple;
+
 int ready_fonthandle;
 int Go_fonthandle;
 int line_fonthandle;
@@ -278,6 +286,7 @@ VOID DELETE_MOVE_LINE(VOID);
 VOID REVERSE_BLOCK(VOID);
 VOID RANKING_UPDATE(VOID);
 VOID MINO_OPERATION(VOID);
+VOID NEXTMINO_JUDGE(VOID);
 
 VOID MY_GAME_TITLE(VOID);			//タイトル
 VOID MY_GAME_RANKING(VOID);			//ランキング
@@ -561,7 +570,8 @@ bool HOLD(VOID)
 			INIT_STAGE_ONLY_MOVE();
 			holdmino = mino_rand;
 			mino_rand = nextmino_rand;
-			nextmino_rand = GetRand(MINO_KIND - 1);
+			//nextmino_rand = GetRand(MINO_KIND - 1);
+			NEXTMINO_JUDGE();
 			firsthold_flag = false;
 			holdfinish_flag = true;
 
@@ -1037,16 +1047,86 @@ VOID MY_GAME_TITLE(VOID)
 
 	sec_flag = true;
 
+	randfinish_red = false;
+	randfinish_orange = false;
+	randfinish_yellow = false;
+	randfinish_green = false;
+	randfinish_rightblue = false;
+	randfinish_blue = false;
+	randfinish_purple = false;
+
 	if (AllKeyState[KEY_INPUT_E] != 0)
 	{
 		StopSoundMem(bgm_title_etc.handle);
 		mode_flag = ENDLESS;
+		mino_rand = GetRand(MINO_KIND - 1);
+		if (mino_rand == RED)
+		{
+			randfinish_red = true;
+		}
+		else if (mino_rand == ORANGE)
+		{
+			randfinish_orange = true;
+		}
+		else if (mino_rand == YELLOW)
+		{
+			randfinish_yellow = true;
+		}
+		else if (mino_rand == GREEN)
+		{
+			randfinish_green = true;
+		}
+		else if (mino_rand == RIGHTBLUE)
+		{
+			randfinish_rightblue = true;
+		}
+		else if (mino_rand == BLUE)
+		{
+			randfinish_blue = true;
+		}
+		else if (mino_rand == PURPLE)
+		{
+			randfinish_purple = true;
+		}
+		//nextmino_rand = GetRand(MINO_KIND - 1);
+		NEXTMINO_JUDGE();
 		GameSceneNow = (int)GAME_SCENE_PLAY_ENDLESS;
 	}
 	else if (AllKeyState[KEY_INPUT_T] != 0)
 	{
 		StopSoundMem(bgm_title_etc.handle);
 		mode_flag = TIMEATTACK;
+		mino_rand = GetRand(MINO_KIND - 1);
+		if (mino_rand == RED)
+		{
+			randfinish_red = true;
+		}
+		else if (mino_rand == ORANGE)
+		{
+			randfinish_orange = true;
+		}
+		else if (mino_rand == YELLOW)
+		{
+			randfinish_yellow = true;
+		}
+		else if (mino_rand == GREEN)
+		{
+			randfinish_green = true;
+		}
+		else if (mino_rand == RIGHTBLUE)
+		{
+			randfinish_rightblue = true;
+		}
+		else if (mino_rand == BLUE)
+		{
+			randfinish_blue = true;
+		}
+		else if (mino_rand == PURPLE)
+		{
+			randfinish_purple = true;
+		}
+		//nextmino_rand = GetRand(MINO_KIND - 1);
+		NEXTMINO_JUDGE();
 		GameSceneNow = (int)GAME_SCENE_PLAY_TIME;
 	}
 	else if (AllKeyState[KEY_INPUT_R] != 0)
@@ -1262,7 +1342,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -1326,7 +1407,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move + 1] = RED;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -1396,7 +1478,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -1472,7 +1555,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = RED;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -1664,7 +1748,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -1728,7 +1813,8 @@ VOID MINO_OPERATION(VOID)
 					}
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -1798,7 +1884,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RED);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -1874,7 +1961,8 @@ VOID MINO_OPERATION(VOID)
 					}
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RED);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -2260,7 +2348,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -2324,7 +2413,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move + 1] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -2394,7 +2484,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -2471,7 +2562,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -2546,7 +2638,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -2610,7 +2703,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -2680,7 +2774,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -2756,7 +2851,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3067,7 +3163,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -3119,7 +3216,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 1] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3183,7 +3281,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -3235,7 +3334,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3298,7 +3398,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -3350,7 +3451,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move - 1] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3414,7 +3516,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(ORANGE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -3466,7 +3569,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = ORANGE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(ORANGE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3587,7 +3691,8 @@ VOID MINO_OPERATION(VOID)
 				{
 					PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(YELLOW);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3651,7 +3756,8 @@ VOID MINO_OPERATION(VOID)
 				stage_move[y_move + 1][x_move] = YELLOW;
 
 				mino_rand = nextmino_rand;
-				nextmino_rand = GetRand(MINO_KIND - 1);
+				//nextmino_rand = GetRand(MINO_KIND - 1);
+				NEXTMINO_JUDGE();
 				STAGE_FLAG_CHANGE_TRUE(YELLOW);
 				holdfinish_flag = false;
 				first_flag = true;
@@ -3771,7 +3877,8 @@ VOID MINO_OPERATION(VOID)
 				{
 					PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(YELLOW);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -3823,7 +3930,8 @@ VOID MINO_OPERATION(VOID)
 				stage_move[y_move][x_move] = YELLOW;
 
 				mino_rand = nextmino_rand;
-				nextmino_rand = GetRand(MINO_KIND - 1);
+				//nextmino_rand = GetRand(MINO_KIND - 1);
+				NEXTMINO_JUDGE();
 				STAGE_FLAG_CHANGE_TRUE(YELLOW);
 				holdfinish_flag = false;
 				first_flag = true;
@@ -4003,7 +4111,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4067,7 +4176,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = GREEN;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -4137,7 +4247,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4213,7 +4324,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = GREEN;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -4385,7 +4497,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4437,7 +4550,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move] = GREEN;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -4501,7 +4615,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(GREEN);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4553,7 +4668,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = GREEN;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(GREEN);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -4806,7 +4922,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4858,7 +4975,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 1] = RIGHTBLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -4920,7 +5038,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -4996,7 +5115,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = RIGHTBLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -5216,7 +5336,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -5268,7 +5389,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 2] = RIGHTBLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -5330,7 +5452,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -5382,7 +5505,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 2][x_move] = RIGHTBLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(RIGHTBLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -5758,7 +5882,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -5822,7 +5947,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move + 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -5892,7 +6018,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -5968,7 +6095,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6043,7 +6171,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6107,7 +6236,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move + 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6177,7 +6307,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6253,7 +6384,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6560,7 +6692,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6614,7 +6747,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6678,7 +6812,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6732,7 +6867,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6795,7 +6931,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6849,7 +6986,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 1] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -6913,7 +7051,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(BLUE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -6967,7 +7106,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = BLUE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(BLUE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -7343,7 +7483,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -7407,7 +7548,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move + 1] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -7477,7 +7619,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -7553,7 +7696,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -7628,7 +7772,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -7692,7 +7837,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -7762,7 +7908,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -7838,7 +7985,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -8143,7 +8291,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -8195,7 +8344,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move + 1] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -8259,7 +8409,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -8311,7 +8462,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move - 1] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -8374,7 +8526,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -8426,7 +8579,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move][x_move] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -8490,7 +8644,8 @@ VOID MINO_OPERATION(VOID)
 					{
 						PlaySoundMem(se_put.handle, DX_PLAYTYPE_BACK);
 						mino_rand = nextmino_rand;
-						nextmino_rand = GetRand(MINO_KIND - 1);
+						//nextmino_rand = GetRand(MINO_KIND - 1);
+						NEXTMINO_JUDGE();
 						STAGE_FLAG_CHANGE_TRUE(PURPLE);
 						holdfinish_flag = false;
 						first_flag = true;
@@ -8542,7 +8697,8 @@ VOID MINO_OPERATION(VOID)
 					stage_move[y_move + 1][x_move] = PURPLE;
 
 					mino_rand = nextmino_rand;
-					nextmino_rand = GetRand(MINO_KIND - 1);
+					//nextmino_rand = GetRand(MINO_KIND - 1);
+					NEXTMINO_JUDGE();
 					STAGE_FLAG_CHANGE_TRUE(PURPLE);
 					holdfinish_flag = false;
 					first_flag = true;
@@ -8592,6 +8748,97 @@ VOID MINO_OPERATION(VOID)
 	return;
 }
 
+VOID NEXTMINO_JUDGE(VOID)
+{
+	if (randfinish_red == true &&
+		randfinish_orange == true &&
+		randfinish_yellow == true &&
+		randfinish_green == true &&
+		randfinish_rightblue == true &&
+		randfinish_blue == true &&
+		randfinish_purple == true)
+	{
+		randfinish_red = false;
+		randfinish_orange = false;
+		randfinish_yellow = false;
+		randfinish_green = false;
+		randfinish_rightblue = false;
+		randfinish_blue = false;
+		randfinish_purple = false;
+	}
+
+	while (true)
+	{
+		static int rand;
+		rand = GetRand(MINO_KIND - 1);
+		if (rand == RED)
+		{
+			if (randfinish_red == false)
+			{
+				nextmino_rand = RED;
+				randfinish_red = true;
+				return;
+			}
+		}
+		else if (rand == ORANGE)
+		{
+			if (randfinish_orange == false)
+			{
+				nextmino_rand = ORANGE;
+				randfinish_orange = true;
+				return;
+			}
+		}
+		else if (rand == YELLOW)
+		{
+			if (randfinish_yellow == false)
+			{
+				nextmino_rand = YELLOW;
+				randfinish_yellow = true;
+				return;
+			}
+		}
+		else if (rand == GREEN)
+		{
+			if (randfinish_green == false)
+			{
+				nextmino_rand = GREEN;
+				randfinish_green = true;
+				return;
+			}
+		}
+		else if (rand == RIGHTBLUE)
+		{
+			if (randfinish_rightblue == false)
+			{
+				nextmino_rand = RIGHTBLUE;
+				randfinish_rightblue = true;
+				return;
+			}
+		}
+		else if (rand == BLUE)
+		{
+			if (randfinish_blue == false)
+			{
+				nextmino_rand = BLUE;
+				randfinish_blue = true;
+				return;
+			}
+		}
+		else if (rand == PURPLE)
+		{
+			if (randfinish_purple == false)
+			{
+				nextmino_rand = PURPLE;
+				randfinish_purple = true;
+				return;
+			}
+		}
+	}
+
+	return;
+}
+
 VOID MY_GAME_PLAY_ENDLESS(VOID)
 {
 	/*初期処理*/
@@ -8632,9 +8879,6 @@ VOID MY_GAME_PLAY_ENDLESS(VOID)
 
 	if (syoki_count - syoki_temp < 1000)
 	{
-		mino_rand = GetRand(MINO_KIND - 1);
-		nextmino_rand = GetRand(MINO_KIND - 1);
-
 		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255), ready_fonthandle);
 	}
 	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
@@ -8964,9 +9208,6 @@ VOID MY_GAME_PLAY_TIME(VOID)
 
 	if (syoki_count - syoki_temp < 1000)
 	{
-		mino_rand = GetRand(MINO_KIND - 1);
-		nextmino_rand = GetRand(MINO_KIND - 1);
-
 		DrawStringToHandle(150, 250, "Ready...", GetColor(255, 255, 255), ready_fonthandle);
 	}
 	else if (syoki_count - syoki_temp > 1001 && syoki_count - syoki_temp < 2000)
